@@ -1,9 +1,11 @@
 import os
 import sys
 import json
+import scraper
 
 import requests
 from flask import Flask, request
+
 
 app = Flask(__name__)
 
@@ -38,8 +40,9 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
+                    x = scraper.main("170906092","1amLawli3t")
 
-                    send_message(sender_id, "roger that!")
+                    send_message(sender_id, x["Attendance(%)"])
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -80,6 +83,9 @@ def send_message(recipient_id, message_text):
 def log(message):  # simple wrapper for logging to stdout on heroku
     print(str(message))
     sys.stdout.flush()
+
+
+
 
 
 if __name__ == '__main__':

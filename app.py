@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-import scraper
+import scraper.slcm as scraper
 
 import requests
 from flask import Flask, request

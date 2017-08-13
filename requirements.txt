@@ -9,8 +9,11 @@ idna==2.5
 itsdangerous==0.24
 Jinja2==2.9.6
 MarkupSafe==1.0
-psycopg2==2.7.3
+prompt-toolkit==1.0.15
 requests==2.18.3
 selenium==3.4.3
+six==1.10.0
 urllib3==1.22
+wcwidth==0.1.7
 Werkzeug==0.12.2
+wit==4.3.0

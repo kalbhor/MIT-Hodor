@@ -115,7 +115,7 @@ def attendance(driver):
 
 
 if __name__ == '__main__':
-    driver = login("170906092", "1amLawli3t")
+    driver = login("", "")
     print(attendance(driver))
     print(timetable(driver))
     print(guardian(driver))

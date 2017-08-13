@@ -40,9 +40,16 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    x = scraper.main("170906092","1amLawli3t")
+                    driver = scraper.login("170906092","1amLawli3t")
+                    att = scraper.attendance(driver)
+                    gu = scraper.guardian(driver)
+                    tt = scraper.timetable(driver)
 
-                    send_message(sender_id, x["Attendance(%)"])
+
+                    send_message(sender_id, att["PSUCLAB"]["percent"])
+                    send_message(sender_id, gu["name"])
+                    send_message(sender_id, gu["phone"])
+                    send_message(sender_id, gu["email"])
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass

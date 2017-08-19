@@ -1,96 +1,114 @@
 import os
-import sys
-import json
 import scraper.slcm as scraper
 
 import requests
+import fbmq
 from flask import Flask, request
 from wit import Wit
 
+from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+db = SQLAlchemy(app)
+page = fbmq.Page(os.environ["PAGE_ACCESS_TOKEN"])
 client = Wit(os.environ["WIT_TOKEN"])
+
+
+class User(db.Model):
+    fbid = db.Column(db.String(80), primary_key=True)
+    rollno = db.Column(db.String(80), unique=True, nullable=True)
+    password = db.Column(db.String(80), nullable=True)
+
+    def __init__(self, fbid, rollno=None, password=None):
+        self.fbid = fbid
+        self.rollno = rollno
+        self.password = password
+
+    def __repr__(self):
+        return '<Rollno> %r>' % self.rollno
 
 def intent(msg):
     resp = client.message(msg)
+    return resp['entities']
+
+def guardian_resp(values, data):
+    values = values['guardian']
+    resp = ""
+
+    response = { 
+            'guardian' : "Your teacher guardian is {}. ".format(data['name']), 
+            'number' : "Phone number - {}. ".format(data['phone']), 
+            'mail' : "email ID: {}. ".format(data['email'])
+            }
+
+    for val in values:
+        resp += response[val['value']]
+
     return resp
-
-@app.route('/', methods=['GET'])
-def verify():
-    # when the endpoint is registered as a webhook, it must echo back
-    # the 'hub.challenge' value it receives in the query arguments
-    if request.args.get("hub.mode") == "subscribe" and request.args.get("hub.challenge"):
-        if not request.args.get("hub.verify_token") == os.environ["VERIFY_TOKEN"]:
-            return "Verification token mismatch", 403
-        return request.args["hub.challenge"], 200
-
-    return "Hello world", 200
-
 
 @app.route('/', methods=['POST'])
 def webhook():
+    page.handle_webhook(request.get_data(as_text=True))
+    return "ok"
 
-    # endpoint for processing incoming messaging events
+@page.handle_message
+def message_handler(event):
+    """:type event: fbmq.Event"""
+    sender_id = event.sender_id
+    message = event.message_text
 
-    data = request.get_json()
-    log(data)  # you may not want to log every incoming message in production, but it's good for testing
+    # User sending request
+    client = User.query.filter_by(fbid=sender_id).first()
 
-    if data["object"] == "page":
+    if client is None: # User doesn't exist on DB
+        new_user = User(sender_id)
+        db.session.add(new_user)
+        db.session.commit()
+        page.send(sender_id, "I can't recognise you.")
+        page.send(sender_id, "Enter your registration number")
+    else:
+        ex_user = User.query.filter_by(fbid = sender_id).first()
+        if ex_user.rollno  == None:
+            ex_user.rollno = message
+            db.session.add(ex_user)
+            db.session.commit()
+            page.send(sender_id, "Enter password")
+        elif ex_user.password == None:
+            ex_user.password = message
+            db.session.add(ex_user)
+            db.session.commit()
+            if scraper.login(ex_user.rollno, ex_user.password) is None:
+                db.session.delete(ex_user)
+                db.session.commit()
+                page.send(sender_id, "Wrong details")
+            else:
+                page.send(sender_id, "Succesfully logged in")
 
-        for entry in data["entry"]:
-            for messaging_event in entry["messaging"]:
+        else:
+            fi_user = User.query.filter_by(fbid = sender_id).first()
 
-                if messaging_event.get("message"):  # someone sent us a message
+            page.typing_on(sender_id)
+            resp = intent(message)
+            if resp != {}:
+                driver = scraper.login(fi_user.rollno, fi_user.password)
+            else:
+                page.send(sender_id, "I couldn't analyse that")
 
-                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
-                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
-                    message_text = messaging_event["message"]["text"]  # the message's text
-                    resp = intent(message_text)
+            #timetable = scraper.timetable(driver)
 
-                    send_message(sender_id, str(resp))
+            if 'guardian' in resp:
+                guardian_data = scraper.guardian(driver)
+                response = guardian_resp(resp, guardian_data)
+                page.send(sender_id, str(response))
 
-                if messaging_event.get("delivery"):  # delivery confirmation
-                    pass
-
-                if messaging_event.get("optin"):  # optin confirmation
-                    pass
-
-                if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
-                    pass
-
-    return "ok", 200
-
-
-def send_message(recipient_id, message_text):
-
-    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
-
-    params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "text": message_text
-        }
-    })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    if r.status_code != 200:
-        log(r.status_code)
-        log(r.text)
-
-
-def log(message):  # simple wrapper for logging to stdout on heroku
-    print(str(message))
-    sys.stdout.flush()
+            page.send(sender_id, str(resp))
 
 
-
+@page.after_send
+def after_send(payload, response):
+    print("Done")
 
 
 if __name__ == '__main__':

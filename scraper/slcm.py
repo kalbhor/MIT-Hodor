@@ -15,8 +15,10 @@ SUBJECTS = {
         "PSUC LAB" : "PSUCLAB",
 }
 
+
 def end(driver):
     driver.quit()
+
 
 def login(rollno, password):
     driver = webdriver.PhantomJS()
@@ -27,6 +29,12 @@ def login(rollno, password):
     user_field.send_keys(rollno)
     pass_field.send_keys(password)
     driver.find_element_by_css_selector('#btnLogin').click()
+
+    try:
+        driver.find_element_by_id("txtUserid")
+        return None
+    except:
+        pass
 
     return driver
 

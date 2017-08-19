@@ -59,8 +59,10 @@ def timetable_resp(values, data):
 
     # timetable = values['timetable']
     time = values['time'][0]['value']
-    time = [today if time == 'today']
-    time = [tomorrow if time == 'tomorrow']
+    if time == 'today':
+        time = today
+    elif time == 'tomorrow':
+        time = tomorrow
 
     response = "The timetable for {} is : \n\n {}".format(time.upper(), data[time])
 

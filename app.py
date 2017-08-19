@@ -77,10 +77,12 @@ def timetable_resp(values, data):
     return response
 
 
+def curse_resp(values):
+    curses = "YOU "
+    for val in values['curse']:
+        curses += val['value'].upper() + ' '
 
-    
-
-
+    return curses
 
 
 @app.route('/', methods=['POST'])
@@ -129,7 +131,7 @@ def message_handler(event):
             if resp != {}:
                 driver = scraper.login(fi_user.rollno, fi_user.password)
             else:
-                page.send(sender_id, "I couldn't analyse that")
+                page.send(sender_id, "Hodor!")
 
             #timetable = scraper.timetable(driver)
 
@@ -143,6 +145,9 @@ def message_handler(event):
                 response = timetable_resp(resp, timetable_data)
                 page.send(sender_id, str(response))
 
+            if 'curse' in resp:
+                response = curse_resp(resp)
+                page.send(sender_id, response)
             page.send(sender_id, str(resp))
 
 

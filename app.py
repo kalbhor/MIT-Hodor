@@ -8,6 +8,8 @@ from wit import Wit
 
 from flask_sqlalchemy import SQLAlchemy
 
+from datetime import date
+import calendar
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -47,6 +49,29 @@ def guardian_resp(values, data):
         resp += response[val['value']]
 
     return resp
+
+
+def timetable_resp(values, data):
+    today = calendar.day_name[date.today().weekday()].lower()
+    tomorrow = calendar.day_name[date.tooday().weekday()+1].lower()
+
+
+
+    # timetable = values['timetable']
+    time = values['time'][0]['value']
+    time = [today if time == 'today']
+    time = [tomorrow if time == 'tomorrow']
+
+    response = "The timetable for {} is : \n\n {}".format(time.upper(), data[time])
+
+    return response
+
+
+
+    
+
+
+
 
 @app.route('/', methods=['POST'])
 def webhook():
@@ -101,6 +126,11 @@ def message_handler(event):
             if 'guardian' in resp:
                 guardian_data = scraper.guardian(driver)
                 response = guardian_resp(resp, guardian_data)
+                page.send(sender_id, str(response))
+
+            if 'timetable' in resp:
+                timetable_data = scraper.timetable(driver)
+                response = timetable_resp(resp, timetable_data)
                 page.send(sender_id, str(response))
 
             page.send(sender_id, str(resp))

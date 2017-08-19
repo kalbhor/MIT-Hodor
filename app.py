@@ -64,7 +64,11 @@ def timetable_resp(values, data):
     elif time == 'tomorrow':
         time = tomorrow
 
-    response = "The timetable for {} is : \n\n {}".format(time.upper(), data[time])
+    response = "The timetable for {} is : \n\n ".format(time.upper())
+
+    for subj in data[time]:
+        t, sub = subj
+        response += "({}) - {} \n\n".format(t,sub)
 
     return response
 

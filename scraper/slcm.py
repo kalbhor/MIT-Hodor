@@ -123,8 +123,6 @@ def attendance(driver):
 
 
 if __name__ == '__main__':
-    driver = login("", "")
+    driver = login("170906246", "Dictionary")
     print(attendance(driver))
-    print(timetable(driver))
-    print(guardian(driver))
     end(driver)

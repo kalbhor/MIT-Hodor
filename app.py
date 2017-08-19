@@ -78,6 +78,27 @@ def timetable_resp(values, data):
     return response
 
 
+def attendance_resp(values, data):
+    sub = values['subject'][0]['value']
+    #time = values['time'][0]['value']
+
+    subject = { 'bio': 'BIO', 'maths': 'MATHS1', 'evs': 'EVS',
+            'psuc': 'PSUC', 'psuc lab': 'PSUCLAB', 'eg': 'EG',
+            'chemistry': 'CHEM', 'bet': 'BET', 'chemistry lab': 'CHEMLAB',
+            'psuc lab': 'PSUCLAB'
+            }
+    
+    resp = "You have {}% attendance right now. \n\n".format(data[subject[sub]]['percent'])
+
+    after_percent = 100 * int(data[sub]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
+
+    if 'bunk' in values:
+        resp += 'After bunking one class, you will have {}%.'.format(after_percent)
+
+    return resp 
+
+    
+
 @app.route('/', methods=['POST'])
 def webhook():
     page.handle_webhook(request.get_data(as_text=True))
@@ -126,7 +147,6 @@ def message_handler(event):
             else:
                 page.send(sender_id, "Hodor!")
 
-            #timetable = scraper.timetable(driver)
 
             if 'guardian' in resp:
                 guardian_data = scraper.guardian(driver)
@@ -138,8 +158,14 @@ def message_handler(event):
                 response = timetable_resp(resp, timetable_data)
                 page.send(sender_id, str(response))
 
+            if 'attendance' in resp:
+                attendance_data = scraper.attendance(driver)
+                response = attendance_resp(resp, attendance_data)
+                page.send(sender_id, str(response))
+
             if 'curse' in resp:
                 page.send(sender_id, "Tera baap!")
+
             page.send(sender_id, str(resp))
 
 

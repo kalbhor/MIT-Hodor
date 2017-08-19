@@ -65,9 +65,10 @@ def timetable_resp(values, data):
         time = today
     elif time == 'tomorrow':
         time = tomorrow
-    elif time == 'sunday':
-        return "Sunday is not a working day"
-
+    
+    if time == 'sunday':
+        return "Sunday is not a working day."
+    
     response = "The timetable for {} is : \n\n ".format(time.upper())
 
     for subj in data[time]:

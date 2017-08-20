@@ -88,14 +88,14 @@ def attendance_resp(values, data):
             'psuc lab': 'PSUCLAB'
             }
     try:
-        resp = "You have {}% attendance right now. \n\n".format(data[subject[sub]]['percent'])
+        resp = "You have {}% attendance in {} right now. \n\n".format(data[subject[sub]]['percent'], sub)
     except KeyError:
         resp = "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet\n\n"
         return resp
 
     after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
 
-    if 'bunk' in values['attendance']:
+    if any('bunk' in vals for vals in values['attendance']):
         resp += 'After bunking one class, you will have {}%.'.format(after_percent)
 
     return resp 

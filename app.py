@@ -91,6 +91,8 @@ def attendance_resp(values, data):
             'psuc lab': 'PSUCLAB'
             }
 
+    resp = ""
+
     for sub in subs:
         sub = sub['value']
         try:

@@ -95,7 +95,7 @@ def attendance_resp(values, data):
 
     after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
 
-    if any('bunk' in vals for vals in values['attendance']):
+    if any(vals['value'] == 'bunk' for vals in values['attendance']):
         resp += 'After bunking one class, you will have {}%.'.format(after_percent)
 
     return resp 

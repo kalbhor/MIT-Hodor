@@ -96,7 +96,7 @@ def attendance_resp(values, data):
     for sub in subs:
         sub = sub['value']
         try:
-            resp += "You have {}% attendance in {} right now. \n\n".format(data[subject[sub]]['percent'], sub)
+            resp += "You have {}% attendance in {} right now. \n".format(data[subject[sub]]['percent'], sub)
         except KeyError:
             resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet\n\n"
             return resp
@@ -106,7 +106,7 @@ def attendance_resp(values, data):
         after_percent = round(after_percent, 2)
 
         if any(vals['value'] == 'bunk' for vals in values['attendance']):
-            resp += 'After bunking one class, you will have {}%.'.format(after_percent)
+            resp += 'After bunking one class, you will have {}%. \n\n'.format(after_percent)
 
     return resp 
 
@@ -157,6 +157,9 @@ def message_handler(event):
             resp = intent(message)
             if resp != {}:
                 driver = scraper.login(fi_user.rollno, fi_user.password)
+                if driver is None:
+                    db.session.delete(fi_user)
+                    db.session.commit()
             else:
                 page.send(sender_id, "Hodor!")
 

@@ -169,7 +169,7 @@ def message_handler(event):
             if 'curse' in resp:
                 page.send(sender_id, "Tera baap!")
 
-            page.send(sender_id, str(resp))
+#            page.send(sender_id, str(resp))
 
 
 @page.after_send

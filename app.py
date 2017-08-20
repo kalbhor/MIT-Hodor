@@ -53,7 +53,7 @@ def guardian_resp(values, data):
 
 def timetable_resp(values, data):
     today = calendar.day_name[date.today().weekday()].lower()
-    tomorrow = calendar.day_name[date.today().weekday()+1].lower()
+    tomorrow = calendar.day_name[(date.today() timedelta(days=1)).weekday()].lower()
 
     #timetable = values['timetable']
     try:

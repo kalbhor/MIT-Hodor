@@ -8,11 +8,12 @@ from wit import Wit
 
 from flask_sqlalchemy import SQLAlchemy
 
-from datetime import date
+from datetime import date, timedelta
 import calendar
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.permanent_session_lifetime = timedelta(seconds=30)
 db = SQLAlchemy(app)
 page = fbmq.Page(os.environ["PAGE_ACCESS_TOKEN"])
 client = Wit(os.environ["WIT_TOKEN"])

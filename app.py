@@ -32,7 +32,10 @@ class User(db.Model):
         return '<Rollno> %r>' % self.rollno
 
 def intent(msg):
-    resp = client.message(msg)
+    try:
+        resp = client.message(msg)
+    except:
+        resp = client.message('Error')
     return resp['entities']
 
 def guardian_resp(values, data):

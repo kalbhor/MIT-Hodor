@@ -79,7 +79,10 @@ def timetable_resp(values, data):
 
 
 def attendance_resp(values, data):
-    sub = values['subject'][0]['value']
+    try:
+        subs = values['subject']
+    except KeyError:
+        subs = [{'value' : 'none'}]
     #time = values['time'][0]['value']
 
     subject = { 'bio': 'BIO', 'maths': 'MATHS1', 'evs': 'EVS',
@@ -87,16 +90,19 @@ def attendance_resp(values, data):
             'chemistry': 'CHEM', 'bet': 'BET', 'chemistry lab': 'CHEMLAB',
             'psuc lab': 'PSUCLAB'
             }
-    try:
-        resp = "You have {}% attendance in {} right now. \n\n".format(data[subject[sub]]['percent'], sub)
-    except KeyError:
-        resp = "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet\n\n"
-        return resp
 
-    after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
+    for sub in subs:
+        sub = sub['value']
+        try:
+            resp += "You have {}% attendance in {} right now. \n\n".format(data[subject[sub]]['percent'], sub)
+        except KeyError:
+            resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet\n\n"
+            return resp
 
-    if any(vals['value'] == 'bunk' for vals in values['attendance']):
-        resp += 'After bunking one class, you will have {}%.'.format(after_percent)
+        after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
+
+        if any(vals['value'] == 'bunk' for vals in values['attendance']):
+            resp += 'After bunking one class, you will have {}%.'.format(after_percent)
 
     return resp 
 

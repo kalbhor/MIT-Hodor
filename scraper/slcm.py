@@ -40,7 +40,7 @@ def login(rollno, password):
 
 def timetable(driver):
     driver.get("http://slcm.manipal.edu/StudentTimeTable.aspx")
-    sleep(1.5)
+    sleep(0.5)
 
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     skeleton = soup.find_all('div', {'class' : 'fc-content-skeleton'})

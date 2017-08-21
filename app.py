@@ -169,7 +169,7 @@ def message_handler(event):
                     db.session.delete(fi_user)
                     db.session.commit()
             else:
-                page.send(sender_id, "Hodor!")
+                page.send(sender_id, "Couldn't analyse that.\n Ask me something like : 'What's my attendance in PSUC' or 'Can I bunk maths?' or 'What's tomorrow's timetable', etc etc")
 
 
             if 'guardian' in resp:

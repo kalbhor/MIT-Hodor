@@ -86,13 +86,12 @@ def attendance_resp(values, data):
     try:
         subs = values['subject']
     except KeyError:
-        subs = [{'value' : 'none'}]
+        subs = [{'value' : 'bio'}, {'value':'maths'}, {'value':'evs'}, {'value' : 'psuc'}, {'value' : 'psuc lab'}, {'value' : 'eg'}, {'value': 'chemistry'}, {'value' : 'bet'}, {'value': 'chemistry lab'}]
     #time = values['time'][0]['value']
 
     subject = { 'bio': 'BIO', 'maths': 'MATHS1', 'evs': 'EVS',
             'psuc': 'PSUC', 'psuc lab': 'PSUCLAB', 'eg': 'EG',
             'chemistry': 'CHEM', 'bet': 'BET', 'chemistry lab': 'CHEMLAB',
-            'psuc lab': 'PSUCLAB'
             }
 
     resp = ""
@@ -102,7 +101,7 @@ def attendance_resp(values, data):
         try:
             resp += "There have been {} total classes, out of which you've attended {}; You have {}% attendance in {} right now. \n".format(data[subject[sub]]['totalclasses'], data[subject[sub]]['present'], data[subject[sub]]['percent'], sub)
         except KeyError:
-            resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet\n\n"
+            resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet for {}\n\n".format(sub)
             return resp
 
         after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)

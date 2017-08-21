@@ -153,12 +153,10 @@ def message_handler(event):
                     db.session.delete(ex_user)
                     db.session.commit()
                     page.send(sender_id, "Wrong details")
-
+                else:
+                    page.send(sender_id, "Succesfully verified. \nYou may now begin chatting")
             except:
                 page.send(sender_id, "Wrong details")
-
-            else:
-                page.send(sender_id, "Succesfully verified. \nYou may now begin chatting")
 
         else:
             fi_user = User.query.filter_by(fbid = sender_id).first()

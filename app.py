@@ -100,7 +100,7 @@ def attendance_resp(values, data):
     for sub in subs:
         sub = sub['value']
         try:
-            resp += "You have {}% attendance in {} right now. \n".format(data[subject[sub]]['percent'], sub)
+            resp += "There have been {} total classes, out of which you've attended {}; You have {}% attendance in {} right now. \n".format(data[subject[sub]]['totalclasses'], data[subject[sub]]['present'], data[subject[sub]]['percent'], sub)
         except KeyError:
             resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet\n\n"
             return resp
@@ -135,14 +135,14 @@ def message_handler(event):
         db.session.add(new_user)
         db.session.commit()
         page.send(sender_id, "I can't recognise you.")
-        page.send(sender_id, "Enter your registration number")
+        page.send(sender_id, "Enter your SLCM registration number")
     else:
         ex_user = User.query.filter_by(fbid = sender_id).first()
         if ex_user.rollno  == None:
             ex_user.rollno = message
             db.session.add(ex_user)
             db.session.commit()
-            page.send(sender_id, "Enter password")
+            page.send(sender_id, "Enter your SLCM password (Don't worry, we can't see your password)")
         elif ex_user.password == None:
             ex_user.password = message
             db.session.add(ex_user)
@@ -152,7 +152,7 @@ def message_handler(event):
                 db.session.commit()
                 page.send(sender_id, "Wrong details")
             else:
-                page.send(sender_id, "Succesfully logged in")
+                page.send(sender_id, "Succesfully verified. \nYou may now begin chatting")
 
         else:
             fi_user = User.query.filter_by(fbid = sender_id).first()

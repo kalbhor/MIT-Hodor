@@ -154,7 +154,7 @@ def message_handler(event):
                     db.session.commit()
                     page.send(sender_id, "Wrong details")
                 else:
-                    page.send(sender_id, "Succesfully verified. \nYou may now begin chatting")
+                    page.send(sender_id, "Successfully verified. \nYou may now begin chatting")
             except:
                 page.send(sender_id, "Wrong details")
 
@@ -171,6 +171,9 @@ def message_handler(event):
             else:
                 page.send(sender_id, "Couldn't analyse that.\n Ask me something like : 'What's my attendance in PSUC'\n'Can I bunk maths?'\n 'What's tomorrow's timetable'\netc etc")
 
+
+            if 'hello' in resp:
+                page.send(sender_id, 'Hello hello')
 
             if 'guardian' in resp:
                 guardian_data = scraper.guardian(driver)

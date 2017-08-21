@@ -8,6 +8,7 @@ SUBJECTS = {
         "ENGINEERING MATHEMATICS - I" : "MATHS1",
         "ENVIRONMENTAL STUDIES" : "EVS",
         "PROBLEM SOLVING USING COMPUTERS" : "PSUC",
+        "ENGINEERING GRAPHICS - I" : "EG",
         "ENGINEERING GRAPHICS - I LAB" : "EG",
         "ENGINEERING CHEMISTRY" : "CHEM",
         "BASIC ELECTRICAL TECHNOLOGY" : "BET",
@@ -121,8 +122,3 @@ def attendance(driver):
     return attendance
 
 
-
-if __name__ == '__main__':
-    driver = login("170906246", "Dictionary")
-    print(attendance(driver))
-    end(driver)

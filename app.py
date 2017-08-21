@@ -147,10 +147,16 @@ def message_handler(event):
             ex_user.password = message
             db.session.add(ex_user)
             db.session.commit()
-            if scraper.login(ex_user.rollno, ex_user.password) is None:
-                db.session.delete(ex_user)
-                db.session.commit()
+            
+            try:
+                if scraper.login(ex_user.rollno, ex_user.password) is None:
+                    db.session.delete(ex_user)
+                    db.session.commit()
+                    page.send(sender_id, "Wrong details")
+
+            except:
                 page.send(sender_id, "Wrong details")
+
             else:
                 page.send(sender_id, "Succesfully verified. \nYou may now begin chatting")
 

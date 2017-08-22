@@ -9,6 +9,8 @@ class messages:
 
     default = "Couldn't analyse that"
 
+    default2 = 'That information is not present in SLCM. I cannot do that.'
+
     curse = "Tera baap!"
 
     TOS = "Terms of service : "

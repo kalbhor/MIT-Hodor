@@ -88,8 +88,11 @@ def message_handler(event):
                 page.send(sender_id, responder.default)
             ### Parsing responses begins here ###
 
-            if 'hello' in resp:
-                page.send(sender_id, 'Hello hello')
+            if 'wit/greetings' in resp:
+                page.send(sender_id, 'Hodor!')
+
+            if 'wit/thanks' in resp:
+                page.send(sender_id, "You're welcome!")
 
             if 'guardian' in resp:
                 guardian_data = scraper.guardian(driver)
@@ -101,7 +104,7 @@ def message_handler(event):
                 response = parser.timetable(resp, timetable_data)
                 page.send(sender_id, str(response))
 
-            if 'attendance' in resp:
+            if 'attendance' in resp or 'subject' in resp:
                 attendance_data = scraper.attendance(driver)
                 response = parser.attendance(resp, attendance_data)
                 page.send(sender_id, str(response))
@@ -111,7 +114,7 @@ def message_handler(event):
 
             else:
                 if resp != {}:
-                    page.send(sender_id, "That information isn't present in SLCM. I can't do that")
+                    page.send(sender_id, responder.default2)
 
 
 @page.after_send

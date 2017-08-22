@@ -65,6 +65,7 @@ def attendance(values, data):
             }
 
     resp = ""
+    print(subs)
 
     for sub in subs:
         sub = sub['value']

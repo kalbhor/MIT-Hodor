@@ -1,22 +1,21 @@
 import os
 import scraper.slcm as scraper
-
+import parser.parser as parser
+import parser.dbase as database
 import requests
 import fbmq
 from flask import Flask, request
+from flask_sqlalchemy import SQLAlchemy
 from wit import Wit
 
-from flask_sqlalchemy import SQLAlchemy
-
-from datetime import date, timedelta
-import calendar
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-app.permanent_session_lifetime = timedelta(seconds=30)
 db = SQLAlchemy(app)
 page = fbmq.Page(os.environ["PAGE_ACCESS_TOKEN"])
-client = Wit(os.environ["WIT_TOKEN"])
+wit_client = Wit(os.environ["WIT_TOKEN"])
+
+dbase = database.handler(db)
 
 
 class User(db.Model):
@@ -32,89 +31,6 @@ class User(db.Model):
     def __repr__(self):
         return '<Rollno> %r>' % self.rollno
 
-def intent(msg):
-    try:
-        resp = client.message(msg)
-    except:
-        resp = client.message('Error')
-    return resp['entities']
-
-def guardian_resp(values, data):
-    values = values['guardian']
-    resp = ""
-
-    response = { 
-            'guardian' : "Your teacher guardian is {}. ".format(data['name']), 
-            'number' : "Phone number - {}. ".format(data['phone']), 
-            'mail' : "email ID: {}. ".format(data['email'])
-            }
-
-    for val in values:
-        resp += response[val['value']]
-
-    return resp
-
-
-def timetable_resp(values, data):
-    today = calendar.day_name[date.today().weekday()].lower()
-    tomorrow = calendar.day_name[(date.today().weekday() + 1) % 7].lower()
-
-    #timetable = values['timetable']
-    try:
-        time = values['time'][0]['value']
-    except KeyError:
-        time = 'today'
-
-    if time == 'today':
-        time = today
-    elif time == 'tomorrow':
-        time = tomorrow
-    
-    if time == 'sunday':
-        return "Sunday is not a working day."
-    
-    response = "The timetable for {} is : \n\n ".format(time.upper())
-
-    for subj in data[time]:
-        t, sub = subj
-        response += "({}) - {} \n\n".format(t,sub)
-
-    return response
-
-
-def attendance_resp(values, data):
-    try:
-        subs = values['subject']
-    except KeyError:
-        subs = [{'value' : 'bio'}, {'value':'maths'}, {'value':'evs'}, {'value' : 'psuc'}, {'value' : 'psuc lab'}, {'value' : 'eg'}, {'value': 'chemistry'}, {'value' : 'bet'}, {'value': 'chemistry lab'}]
-    #time = values['time'][0]['value']
-
-    subject = { 'bio': 'BIO', 'maths': 'MATHS1', 'evs': 'EVS',
-            'psuc': 'PSUC', 'psuc lab': 'PSUCLAB', 'eg': 'EG',
-            'chemistry': 'CHEM', 'bet': 'BET', 'chemistry lab': 'CHEMLAB',
-            }
-
-    resp = ""
-
-    for sub in subs:
-        sub = sub['value']
-        try:
-            resp += "There have been {} total classes, out of which you've attended {}; You have {}% attendance in {} right now. \n".format(data[subject[sub]]['totalclasses'], data[subject[sub]]['present'], data[subject[sub]]['percent'], sub)
-        except KeyError:
-            resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet for {}\n\n".format(sub)
-            return resp
-
-        after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
-
-        after_percent = round(after_percent, 2)
-
-        if any(vals['value'] == 'bunk' for vals in values['attendance']):
-            resp += 'After bunking one class, you will have {}%. \n\n'.format(after_percent)
-
-    return resp 
-
-    
-
 @app.route('/', methods=['POST'])
 def webhook():
     page.handle_webhook(request.get_data(as_text=True))
@@ -126,73 +42,67 @@ def message_handler(event):
     sender_id = event.sender_id
     message = event.message_text
 
-    # User sending request
+    ### get user sending request ###
     client = User.query.filter_by(fbid=sender_id).first()
 
-    if client is None: # User doesn't exist on DB
-        new_user = User(sender_id)
-        db.session.add(new_user)
-        db.session.commit()
+    if client is None:
+        ### User doesn't exist on DB ###
+        user = User(sender_id)
+        dbase.new_user(sender_id, user)
         page.send(sender_id, "I can't recognise you.")
         page.send(sender_id, "Enter your SLCM registration number")
     else:
-        ex_user = User.query.filter_by(fbid = sender_id).first()
-        if ex_user.rollno  == None:
-            ex_user.rollno = message
-            db.session.add(ex_user)
-            db.session.commit()
+        user = User.query.filter_by(fbid = sender_id).first()
+        if user.rollno  == None:
+            ### User has entered regno ###
+            dbase.regno(message, user)
             page.send(sender_id, "Enter your SLCM password (Don't worry, we can't see your password)")
-        elif ex_user.password == None:
-            ex_user.password = message
-            db.session.add(ex_user)
-            db.session.commit()
-            
-            try:
-                if scraper.login(ex_user.rollno, ex_user.password) is None:
-                    db.session.delete(ex_user)
-                    db.session.commit()
+        elif user.password == None:
+            ### User has entered password ###
+            dbase.password(message, user)
+
+            if scraper.login(user.rollno, user.password) is None:
+                    ### Remove record if wrong details have been entered ###
+                    ### Goes back to step 1 (Enter regno) ###
+                    dbase.delete(user)
                     page.send(sender_id, "Wrong details")
-                else:
+            else:
                     page.send(sender_id, "Successfully verified. \nYou may now begin chatting")
-            except:
-                page.send(sender_id, "Wrong details")
 
         else:
-            fi_user = User.query.filter_by(fbid = sender_id).first()
+            user = User.query.filter_by(fbid = sender_id).first()
 
             page.typing_on(sender_id)
-            resp = intent(message)
+            resp = parser.witintent(message, wit_client)
             if resp != {}:
-                driver = scraper.login(fi_user.rollno, fi_user.password)
+                driver = scraper.login(user.rollno, user.password)
                 if driver is None:
-                    db.session.delete(fi_user)
-                    db.session.commit()
+                    dbase.delete(user)
             else:
                 page.send(sender_id, "Couldn't analyse that.\n Ask me something like : 'What's my attendance in PSUC'\n'Can I bunk maths?'\n 'What's tomorrow's timetable'\netc etc")
 
+            ### Parsing responses begins here ###
 
             if 'hello' in resp:
                 page.send(sender_id, 'Hello hello')
 
             if 'guardian' in resp:
                 guardian_data = scraper.guardian(driver)
-                response = guardian_resp(resp, guardian_data)
+                response = parser.guardian(resp, guardian_data)
                 page.send(sender_id, str(response))
 
             if 'timetable' in resp:
                 timetable_data = scraper.timetable(driver)
-                response = timetable_resp(resp, timetable_data)
+                response = parser.timetable(resp, timetable_data)
                 page.send(sender_id, str(response))
 
             if 'attendance' in resp:
                 attendance_data = scraper.attendance(driver)
-                response = attendance_resp(resp, attendance_data)
+                response = parser.attendance(resp, attendance_data)
                 page.send(sender_id, str(response))
 
             if 'curse' in resp:
                 page.send(sender_id, "Tera baap!")
-
-#            page.send(sender_id, str(resp))
 
 
 @page.after_send

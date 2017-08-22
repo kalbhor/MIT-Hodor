@@ -13,4 +13,4 @@ class messages:
 
     TOS = "Terms of service : "
 
-    menu = "Hey, I am MIT Hodor, a messenger bot.\n\n I can tell you about your attendance, timetable, teacher guardian & whether you can bunk a class or not\n\n"
+    menu = "Hey, I am MIT Hodor, a messenger bot.\n\n I can tell you about your:\n\n- Attendance\n- Timetable\n- Teacher guardian\n- Whether you can bunk a class or not\n\n"

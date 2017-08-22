@@ -80,7 +80,8 @@ def attendance(values, data):
 
         after_percent = round(after_percent, 2)
 
-        if any(vals['value'] == 'bunk' for vals in values['attendance']):
-            resp += 'After bunking one class, you will have {}%. \n\n'.format(after_percent)
+        if 'attendance' in values:
+            if any(vals['value'] == 'bunk' for vals in values['attendance']):
+                resp += 'After bunking one class, you will have {}%. \n\n'.format(after_percent)
 
     return resp

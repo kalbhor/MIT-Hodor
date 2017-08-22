@@ -41,6 +41,9 @@ def webhook():
     page.handle_webhook(request.get_data(as_text=True))
     return "ok"
 
+@page.handle_delivery
+def delivery_handler(payload):
+    print("Message delivered")
 ### Main method (Handles user messages, db) ###
 @page.handle_message
 def message_handler(event):

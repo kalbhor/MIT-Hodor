@@ -109,6 +109,10 @@ def message_handler(event):
             if 'curse' in resp:
                 page.send(sender_id, responder.curse)
 
+            else:
+                if resp != {}:
+                    page.send(sender_id, "That information isn't present in SLCM. I can't do that")
+
 
 @page.after_send
 def after_send(payload, response):

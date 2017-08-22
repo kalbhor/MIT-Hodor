@@ -55,6 +55,7 @@ def attendance(values, data):
     try:
         subs = values['subject']
     except KeyError:
+        print("ok")
         subs = [{'value' : 'bio'}, {'value':'maths'}, {'value':'evs'}, {'value' : 'psuc'}, {'value' : 'psuc lab'}, {'value' : 'eg'}, {'value': 'chemistry'}, {'value' : 'bet'}, {'value': 'chemistry lab'}]
     #time = values['time'][0]['value']
 
@@ -69,6 +70,7 @@ def attendance(values, data):
         sub = sub['value']
         try:
             resp += "There have been {} total classes, out of which you've attended {}; You have {}% attendance in {} right now. \n".format(data[subject[sub]]['totalclasses'], data[subject[sub]]['present'], data[subject[sub]]['percent'], sub)
+            print(resp)
         except KeyError:
             resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet for {}\n\n".format(sub)
             return resp

@@ -18,7 +18,7 @@ db = SQLAlchemy(app)
 page = fbmq.Page(os.environ["PAGE_ACCESS_TOKEN"])
 wit_client = Wit(os.environ["WIT_TOKEN"])
 dbase = database.handler(db)
-responder = responses.message()
+responder = responses.messages()
 
 
 ### DB Skeleton ###

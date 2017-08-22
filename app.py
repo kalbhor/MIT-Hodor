@@ -1,6 +1,7 @@
 import os
 import scraper.slcm as scraper
 import parser.parser as parser
+import parser.responses as responses
 import parser.dbase as database
 import requests
 import fbmq
@@ -9,16 +10,18 @@ from flask_sqlalchemy import SQLAlchemy
 from wit import Wit
 
 
+### CONFIGS ###
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 page = fbmq.Page(os.environ["PAGE_ACCESS_TOKEN"])
 wit_client = Wit(os.environ["WIT_TOKEN"])
-
 dbase = database.handler(db)
+responder = responses.message()
 
 
+### DB Skeleton ###
 class User(db.Model):
     fbid = db.Column(db.String(80), primary_key=True)
     rollno = db.Column(db.String(80), unique=True, nullable=True)
@@ -32,11 +35,13 @@ class User(db.Model):
     def __repr__(self):
         return '<Rollno> %r>' % self.rollno
 
+### Handles Fb verification ###
 @app.route('/', methods=['POST'])
 def webhook():
     page.handle_webhook(request.get_data(as_text=True))
     return "ok"
 
+### Main method (Handles user messages, db) ###
 @page.handle_message
 def message_handler(event):
     """:type event: fbmq.Event"""
@@ -50,14 +55,14 @@ def message_handler(event):
         ### User doesn't exist on DB ###
         user = User(sender_id)
         dbase.new_user(sender_id, user)
-        page.send(sender_id, "I can't recognise you.")
-        page.send(sender_id, "Enter your SLCM registration number")
+        page.send(sender_id, responder.menu)
+        page.send(sender_id, responder.new_user)
     else:
         user = User.query.filter_by(fbid = sender_id).first()
         if user.rollno  == None:
             ### User has entered regno ###
             dbase.regno(message, user)
-            page.send(sender_id, "Enter your SLCM password (Don't worry, we can't see your password)")
+            page.send(sender_id, responder.new_user_pass)
         elif user.password == None:
             ### User has entered password ###
             dbase.password(message, user)
@@ -66,9 +71,9 @@ def message_handler(event):
                     ### Remove record if wrong details have been entered ###
                     ### Goes back to step 1 (Enter regno) ###
                     dbase.delete(user)
-                    page.send(sender_id, "Wrong details")
+                    page.send(sender_id, responder.wrong)
             else:
-                    page.send(sender_id, "Successfully verified. \nYou may now begin chatting")
+                    page.send(sender_id, responder.verified)
 
         else:
             user = User.query.filter_by(fbid = sender_id).first()
@@ -80,8 +85,7 @@ def message_handler(event):
                 if driver is None:
                     dbase.delete(user)
             else:
-                page.send(sender_id, "Couldn't analyse that.\n Ask me something like : 'What's my attendance in PSUC'\n'Can I bunk maths?'\n 'What's tomorrow's timetable'\netc etc")
-
+                page.send(sender_id, responder.default)
             ### Parsing responses begins here ###
 
             if 'hello' in resp:
@@ -103,7 +107,7 @@ def message_handler(event):
                 page.send(sender_id, str(response))
 
             if 'curse' in resp:
-                page.send(sender_id, "Tera baap!")
+                page.send(sender_id, responder.curse)
 
 
 @page.after_send

@@ -113,9 +113,6 @@ def message_handler(event):
             if 'curse' in resp:
                 page.send(sender_id, responder.curse)
 
-            else:
-                if resp != {}:
-                    page.send(sender_id, responder.default2)
 
 
 @page.after_send

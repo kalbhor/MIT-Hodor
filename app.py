@@ -80,6 +80,7 @@ def message_handler(event):
 
             page.typing_on(sender_id)
             resp = parser.witintent(message, wit_client)
+            print(log)
             if resp != {}:
                 driver = scraper.login(user.rollno, user.password)
                 if driver is None:
@@ -88,10 +89,10 @@ def message_handler(event):
                 page.send(sender_id, responder.default)
             ### Parsing responses begins here ###
 
-            if 'wit/greetings' in resp:
+            if 'greetings' in resp:
                 page.send(sender_id, 'Hodor!')
 
-            if 'wit/thanks' in resp:
+            if 'thanks' in resp:
                 page.send(sender_id, "You're welcome!")
 
             if 'guardian' in resp:

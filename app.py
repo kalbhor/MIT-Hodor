@@ -48,6 +48,7 @@ def webhook():
 @page.handle_delivery
 def delivery_handler(payload):
     print("Message delivered")
+
 ### Main method (Handles user messages, db) ###
 @page.handle_message
 def message_handler(event):
@@ -96,6 +97,7 @@ def message_handler(event):
                 if driver is None:
                     dbase.delete(user)
             else:
+                page.send(sender_id, message)
                 page.send(sender_id, responder.default)
             ### Parsing responses begins here ###
 

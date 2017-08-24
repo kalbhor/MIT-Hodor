@@ -80,6 +80,9 @@ def message_handler(event):
                     dbase.delete(user)
                     page.send(sender_id, responder.wrong)
             else:
+                    driver = scraper.login(user.rollno, user.password)
+                    group = scraper.group(driver)
+                    dbase.group(group, user)
                     page.send(sender_id, responder.verified)
 
         else:

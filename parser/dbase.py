@@ -20,6 +20,11 @@ class handler:
         self.db.session.add(user)
         self.db.session.commit()
 
+    def group(self, group, user):
+        user.group = group
+        self.db.session.add(user)
+        self.db.session.commit()
+
     def delete(self, user):
         self.db.session.delete(user)
         self.db.session.commit()

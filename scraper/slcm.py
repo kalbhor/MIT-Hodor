@@ -100,6 +100,13 @@ def guardian(driver):
 
     return guardian_details
 
+def group(driver):
+    driver.get("http://slcm.manipal.edu/Academics.aspx")
+    group = driver.find_element_by_id("ContentPlaceHolder1_lblGroup")
+
+    return group.text
+
+ 
 def attendance(driver):
 
     driver.get("http://slcm.manipal.edu/Academics.aspx")
@@ -128,5 +135,10 @@ def attendance(driver):
 
 
     return attendance
+
+if __name__ == '__main__':
+    driver = login("170906246", "MadarchodNeel13")
+    x = group(driver)
+    print(x)
 
 

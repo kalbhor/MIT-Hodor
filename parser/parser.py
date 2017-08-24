@@ -61,29 +61,32 @@ def attendance(values, data):
     except KeyError:
         output = "{}/{} {}% attendance in {}. \n"
 
-        subs = [{'value' : 'bio'}, {'value':'maths'}, {'value':'evs'}, {'value' : 'psuc'}, {'value' : 'psuc lab'}, {'value' : 'eg'}, {'value': 'chemistry'}, {'value' : 'bet'}, {'value': 'chemistry lab'}]
-    #time = values['time'][0]['value']
+        subs = [{'value' : 'BIO'}, {'value': 'BME'},
+                {'value': 'ENG'}, {'value':'MATHS1'},
+                {'value':'EVS'}, {'value' : 'PSUC'},
+                {'value' : 'PSUCLAB'}, {'value' : 'EG'},
+                {'value': 'CHEM'}, {'value' : 'BET'},
+                {'value': 'CHEMLAB'}, {'value': 'PHY'},
+                {'value': 'PHYLAB'}, {'value': 'MOS'},
+                {'value': 'BME'}, {'value': 'WORKSHOP'},]
 
-    subject = { 'bio': 'BIO', 'maths': 'MATHS1', 'evs': 'EVS',
-            'psuc': 'PSUC', 'psuc lab': 'PSUCLAB', 'eg': 'EG',
-            'chemistry': 'CHEM', 'bet': 'BET', 'chemistry lab': 'CHEMLAB',
-            }
+    #time = values['time'][0]['value']
 
     resp = ""
 
     for sub in subs:
         sub = sub['value']
         try:
-            resp += output.format(data[subject[sub]]['present'], data[subject[sub]]['totalclasses'], data[subject[sub]]['percent'], sub)
+            resp += output.format(data[sub]['present'], data[sub]['totalclasses'], data[sub]['percent'], sub)
         except KeyError:
             resp += "SLCM hasn't been updated for {}\n\n".format(sub)
+
         try:
-            after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
+            after_percent = 100 * int(data[sub]['present'])/(int(data[sub]['totalclasses'])+1)
             after_percent = round(after_percent, 2)
             if 'attendance' in values:
                 if any(vals['value'] == 'bunk' for vals in values['attendance']):
                     resp += 'After bunking one class, you will have {}%. \n\n'.format(after_percent)
-
         except KeyError:
             pass
 

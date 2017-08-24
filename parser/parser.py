@@ -54,21 +54,26 @@ def timetable(values, data):
     return response
 
 
-def attendance(values, data):
+def attendance(values, data, group):
     try:
         subs = values['subject']
         output = "You've attended {} classes out of {}; You have {}% attendance in {} right now. \n"
     except KeyError:
         output = "{}/{} {}% attendance in {}. \n"
 
-        subs = [{'value' : 'BIO'}, {'value': 'BME'},
-                {'value': 'ENG'}, {'value':'MATHS1'},
-                {'value':'EVS'}, {'value' : 'PSUC'},
-                {'value' : 'PSUCLAB'}, {'value' : 'EG'},
-                {'value': 'CHEM'}, {'value' : 'BET'},
-                {'value': 'CHEMLAB'}, {'value': 'PHY'},
-                {'value': 'PHYLAB'}, {'value': 'MOS'},
-                {'value': 'BME'}, {'value': 'WORKSHOP'},]
+        if group == 'CHEMISTRY GROUP':
+            subs = [{'value': 'BIO'}, {'value': 'MATHS1'},
+                    {'value': 'EVS'}, {'value': 'PSUC'},
+                    {'value': 'PSUCLAB'}, {'value': 'EG'},
+                    {'value': 'CHEM'}, {'value': 'BET'},
+                    {'value': 'CHEMLAB'}]
+
+        elif group == 'PHYSICS GROUP':
+            subs = [{'value': 'BME'}, {'value': 'ENG'},
+                    {'value': 'MATHS1'}, {'value': 'EG'},
+                    {'value': 'PHY'}, {'value': 'PHYLAB'},
+                    {'value': 'MOS'}, {'value': 'BME'},
+                    {'value': 'WORKSHOP'}]
 
     #time = values['time'][0]['value']
 

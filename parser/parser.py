@@ -48,7 +48,7 @@ def timetable(values, data):
         t, sub = subj
         response += "({}) - {} \n\n".format(t,sub)
 
-    if data[time] == {}:
+    if len(data[time]) == 0:
         return "There are no classes or {} is a holiday".format(time.upper())
 
     return response

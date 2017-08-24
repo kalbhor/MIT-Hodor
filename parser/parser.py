@@ -75,13 +75,16 @@ def attendance(values, data):
         sub = sub['value']
         try:
             resp += output.format(data[subject[sub]]['present'], data[subject[sub]]['totalclasses'], data[subject[sub]]['percent'], sub)
-            after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
-            after_percent = round(after_percent, 2)
         except KeyError:
             resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet for {}\n\n".format(sub)
-        
-        if 'attendance' in values:
-            if any(vals['value'] == 'bunk' for vals in values['attendance']):
-                resp += 'After bunking one class, you will have {}%. \n\n'.format(after_percent)
+        try:
+            after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
+            after_percent = round(after_percent, 2)
+            if 'attendance' in values:
+                if any(vals['value'] == 'bunk' for vals in values['attendance']):
+                    resp += 'After bunking one class, you will have {}%. \n\n'.format(after_percent)
+
+        except:
+            resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet for {}\n\n".format(sub)
 
     return resp

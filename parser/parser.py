@@ -84,7 +84,7 @@ def attendance(values, data):
                 if any(vals['value'] == 'bunk' for vals in values['attendance']):
                     resp += 'After bunking one class, you will have {}%. \n\n'.format(after_percent)
 
-        except:
-            resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet for {}\n\n".format(sub)
+        except KeyError:
+            pass
 
     return resp

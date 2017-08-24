@@ -26,14 +26,18 @@ class User(db.Model):
     fbid = db.Column(db.String(80), primary_key=True)
     rollno = db.Column(db.String(80), unique=True, nullable=True)
     password = db.Column(db.String(80), nullable=True)
+    group = db.Column(db.String(80), nullable=True)
+    name = db.Column(db.String(80), nullable=True)
 
-    def __init__(self, fbid, rollno=None, password=None):
+    def __init__(self, fbid, rollno=None, password=None, group=None, name=None):
         self.fbid = fbid
         self.rollno = rollno
         self.password = password
+        self.group = group
+        self.name = name
 
     def __repr__(self):
-        return '<Rollno> %r>' % self.rollno
+        return '< <Name>{} <Rollno>{} >'.format(self.name, self.rollno)
 
 ### Handles Fb verification ###
 @app.route('/', methods=['POST'])

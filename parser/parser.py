@@ -48,6 +48,9 @@ def timetable(values, data):
         t, sub = subj
         response += "({}) - {} \n\n".format(t,sub)
 
+    if data[time] == {}:
+        return "There are no classes or {} is a holiday".format(time.upper())
+
     return response
 
 
@@ -74,7 +77,6 @@ def attendance(values, data):
             resp += output.format(data[subject[sub]]['present'], data[subject[sub]]['totalclasses'], data[subject[sub]]['percent'], sub)
         except KeyError:
             resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet for {}\n\n".format(sub)
-            return resp
 
         after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
 

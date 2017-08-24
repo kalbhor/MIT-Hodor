@@ -97,12 +97,11 @@ def message_handler(event):
                 if driver is None:
                     dbase.delete(user)
             else:
-                page.send(sender_id, message)
-                page.send(sender_id, responder.default)
+                page.send(sender_id, "Hodor!")
             ### Parsing responses begins here ###
 
             if 'greetings' in resp:
-                page.send(sender_id, 'Hodor!')
+                page.send(sender_id, 'Hello hello!')
 
             if 'thanks' in resp:
                 page.send(sender_id, "You're welcome!")

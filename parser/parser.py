@@ -76,7 +76,7 @@ def attendance(values, data):
         try:
             resp += output.format(data[subject[sub]]['present'], data[subject[sub]]['totalclasses'], data[subject[sub]]['percent'], sub)
         except KeyError:
-            resp += "Sorry, there seems to be a problem. Perhaps SLCM hasn't been updated yet for {}\n\n".format(sub)
+            resp += "SLCM hasn't been updated for {}\n\n".format(sub)
         try:
             after_percent = 100 * int(data[subject[sub]]['present'])/(int(data[subject[sub]]['totalclasses'])+1)
             after_percent = round(after_percent, 2)

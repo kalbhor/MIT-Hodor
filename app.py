@@ -156,8 +156,10 @@ def message_handler(event):
 
             if 'guardian' in resp:
                 guardian_data = scraper.guardian(driver)
-                response = parser.guardian(resp, guardian_data)
+                response, phone = parser.guardian(resp, guardian_data)
                 page.send(sender_id, str(response))
+                if phone != None:
+                    page.send(sender_id, fbmq.Template.Buttons("Smart response", fbmq.Templates.ButtonPhoneNumber("Call now", phone))
 
             if 'timetable' in resp:
                 timetable_data = scraper.timetable(driver)

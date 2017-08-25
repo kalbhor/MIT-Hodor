@@ -18,10 +18,14 @@ def guardian(values, data):
             'mail' : "email ID: {}. ".format(data['email'])
             }
 
+    phone = None
+
     for val in values:
         resp += response[val['value']]
+        if val['value'] == 'number':
+            phone = data['phone']
 
-    return resp
+    return resp, phone 
 
 
 def timetable(values, data):

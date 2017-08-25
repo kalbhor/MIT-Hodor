@@ -44,6 +44,7 @@ class User(db.Model):
     def __repr__(self):
         return '< <Name>{} <Rollno>{} >'.format(self.name, self.rollno)
 
+'''
 @page.callback(['ATTENDANCE'])
 def quick_attendance(payload, event):
     sender_id = event.sender_id
@@ -61,6 +62,7 @@ def quick_attendance(payload, event):
             page.send(sender_id, str(resp))
         except ValueError:
             print('Faced value error {}'.format(resp))
+'''
 
 
 @page.handle_delivery

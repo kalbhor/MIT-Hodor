@@ -57,11 +57,13 @@ def timetable(values, data):
 def attendance(values, data, group):
     try:
         subs = values['subject']
-        output_att = "You've attended {} classes out of {}; You have {}% attendance in {} right now. \n"
-        output_bunk ="After bunking one class, you will have {}%. \n\n"
+        output_att = "You've attended {}/{} classes; You have {}% attendance in {} right now.\n"
+        output_bunk ="After bunking one class, you will have {}%.\n"
     except KeyError:
-        output_att = "{}/{} {}% attendance in {}. \n"
-        output_bunk = "{}% after 1 bunk. \n"
+        output_att = "{}/{} {}% attendance in {}.\n"
+        output_bunk = "{}% after 1 bunk.\n"
+
+    slcm_error = "SLCM hasn't been updated for {}\n"
 
         if group == 'CHEMISTRY GROUP':
             subs = [{'value': 'BIO'}, {'value': 'MATHS1'},
@@ -86,7 +88,7 @@ def attendance(values, data, group):
         try:
             resp += output_att.format(data[sub]['present'], data[sub]['totalclasses'], data[sub]['percent'], sub)
         except KeyError:
-            resp += "SLCM hasn't been updated for {}\n\n".format(sub)
+            resp += slcm_error.format(sub)
 
         try:
             after_percent = 100 * int(data[sub]['present'])/(int(data[sub]['totalclasses'])+1)

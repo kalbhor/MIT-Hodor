@@ -92,8 +92,12 @@ def message_handler(event):
         user = User.query.filter_by(fbid = sender_id).first()
         if user.name is None:
             user_profile = page.get_user_profile(sender_id)
-            user.name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
-            db.session.commit()
+            print(user_profile)
+            try:
+                user.name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
+                db.session.commit()
+            except:
+                pass
 
         if user.rollno  == None:
             ### User has entered regno ###

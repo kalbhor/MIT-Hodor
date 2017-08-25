@@ -55,6 +55,22 @@ def timetable(values, data):
 
 
 def attendance(values, data, group):
+
+    if group == 'CHEMISTRY GROUP':
+        subs = [{'value': 'BIO'}, {'value': 'MATHS1'},
+                    {'value': 'EVS'}, {'value': 'PSUC'},
+                    {'value': 'PSUCLAB'}, {'value': 'EG'},
+                    {'value': 'CHEM'}, {'value': 'BET'},
+                    {'value': 'CHEMLAB'}]
+
+    elif group == 'PHYSICS GROUP':
+        subs = [{'value': 'BME'}, {'value': 'ENG'},
+                    {'value': 'MATHS1'}, {'value': 'EG'},
+                    {'value': 'PHY'}, {'value': 'PHYLAB'},
+                    {'value': 'MOS'}, {'value': 'BME'},
+                    {'value': 'WORKSHOP'}]
+
+
     try:
         subs = values['subject']
         output_att = "You've attended {}/{} classes; You have {}% attendance in {} right now.\n"
@@ -64,21 +80,6 @@ def attendance(values, data, group):
         output_bunk = "{}% after 1 bunk.\n"
 
     slcm_error = "SLCM hasn't been updated for {}\n"
-
-        if group == 'CHEMISTRY GROUP':
-            subs = [{'value': 'BIO'}, {'value': 'MATHS1'},
-                    {'value': 'EVS'}, {'value': 'PSUC'},
-                    {'value': 'PSUCLAB'}, {'value': 'EG'},
-                    {'value': 'CHEM'}, {'value': 'BET'},
-                    {'value': 'CHEMLAB'}]
-
-        elif group == 'PHYSICS GROUP':
-            subs = [{'value': 'BME'}, {'value': 'ENG'},
-                    {'value': 'MATHS1'}, {'value': 'EG'},
-                    {'value': 'PHY'}, {'value': 'PHYLAB'},
-                    {'value': 'MOS'}, {'value': 'BME'},
-                    {'value': 'WORKSHOP'}]
-
     #time = values['time'][0]['value']
 
     resp = ""

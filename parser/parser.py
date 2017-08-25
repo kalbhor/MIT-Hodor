@@ -83,6 +83,7 @@ def attendance(values, data, group):
     #time = values['time'][0]['value']
 
     resp = ""
+    BUNK = False
 
     for sub in subs:
         sub = sub['value']
@@ -97,9 +98,17 @@ def attendance(values, data, group):
             if 'attendance' in values:
                 if any(vals['value'] == 'bunk' for vals in values['attendance']):
                     resp += output_bunk.format(after_percent)
+                    BUNK = True
         except KeyError:
             pass
 
-    
     resp = resp.splitlines()
+    if BUNK:
+        x = []
+        i = 0
+        while i < range(len(resp)):
+            x.append(resp[i]+resp[i+1])
+            i += 2
+        resp = x 
+
     return resp

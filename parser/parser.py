@@ -106,7 +106,7 @@ def attendance(values, data, group):
     if BUNK:
         x = []
         i = 0
-        while i < range(len(resp)):
+        while i < len(resp):
             x.append(resp[i]+resp[i+1])
             i += 2
         resp = x 

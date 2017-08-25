@@ -73,10 +73,10 @@ def attendance(values, data, group):
 
     try:
         subs = values['subject']
-        output_att = "You've attended {}/{} classes; You have {}% attendance in {} right now.\n"
+        output_att = "You've attended ({}/{})  classes; You have {}% attendance in {} right now.\n"
         output_bunk ="After bunking one class, you will have {}%.\n"
     except KeyError:
-        output_att = "{}/{} {}% attendance in {}.\n"
+        output_att = "({}/{})  {}% attendance in {}.\n"
         output_bunk = "{}% after 1 bunk.\n"
 
     slcm_error = "SLCM hasn't been updated for {}\n"
@@ -103,12 +103,16 @@ def attendance(values, data, group):
             pass
 
     resp = resp.splitlines()
-    if BUNK:
-        x = []
-        i = 0
-        while i < len(resp):
-            x.append(resp[i]+'\n'+resp[i+1])
-            i += 2
-        resp = x 
+    try:
+        if BUNK:
+            x = []
+            i = 0
+            while i < len(resp):
+                x.append(resp[i]+'\n'+resp[i+1])
+                i += 2
+            resp = x 
+
+    except IndexError:
+        print('Index error')
 
     return resp

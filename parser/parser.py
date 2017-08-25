@@ -76,7 +76,7 @@ def attendance(values, data, group):
         output_att = "You've attended {}/{} classes; You have {}% attendance in {} right now.\n"
         output_bunk ="After bunking one class, you will have {}%.\n"
     except KeyError:
-        output_att = "{}/{} {}% attendance in {}.\n"
+        output_att = "{}/{} {}% attendance in {}.\n\n"
         output_bunk = "{}% after 1 bunk.\n"
 
     slcm_error = "SLCM hasn't been updated for {}\n"

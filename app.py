@@ -139,7 +139,10 @@ def message_handler(event):
                 attendance_data = scraper.attendance(driver)
                 response = parser.attendance(resp, attendance_data, group)
                 for resp in response:
-                    page.send(sender_id, str(resp))
+                    try:
+                        page.send(sender_id, str(resp))
+                    except ValueError:
+                        print('Faced value error {}'.format(resp))
 
             if 'curse' in resp:
                 page.send(sender_id, responder.curse)

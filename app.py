@@ -22,8 +22,8 @@ responder = responses.messages()
 
 quick_replies = [
         fbmq.QuickReply(title="Attendance", payload="ATTENDANCE"),
-        #QuickReply(title="Timetable", payload="TIMETABLE"),
-        #QuickReply(title="Teacher Guardian", payload="TEACHER"),
+        fbmq.QuickReply(title="Timetable", payload="TIMETABLE"),
+        fbmq.QuickReply(title="Teacher Guardian", payload="TEACHER"),
     ]
 
 ### DB Skeleton ###
@@ -181,7 +181,7 @@ def message_handler(event):
             if 'hodor' in resp:
                 page.send(sender_id, "HODOOOOOR!")
     
-    page.send(sender_id, "I can do this stuff", quick_replies=quick_replies,
+    page.send(sender_id, "", quick_replies=quick_replies,
             metadata="DEVELOPER_DEFINED_METADATA")
 
 

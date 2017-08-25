@@ -77,11 +77,6 @@ def message_handler(event):
     ### get user sending request ###
     client = User.query.filter_by(fbid=sender_id).first()
 
-    if client.name is None:
-        user_profile = page.get_user_profile(sender_id)
-        client.name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
-        db.session.commit()
-
     if client is None:
         ### User doesn't exist on DB ###
         user = User(sender_id)
@@ -90,6 +85,11 @@ def message_handler(event):
         page.send(sender_id, responder.new_user)
     else:
         user = User.query.filter_by(fbid = sender_id).first()
+        if user.name is None:
+            user_profile = page.get_user_profile(sender_id)
+            user.name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
+            db.session.commit()
+
         if user.rollno  == None:
             ### User has entered regno ###
             dbase.regno(message, user)

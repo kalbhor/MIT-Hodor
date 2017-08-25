@@ -181,7 +181,7 @@ def message_handler(event):
             if 'hodor' in resp:
                 page.send(sender_id, "HODOOOOOR!")
     
-    page.send(sender_id, "", quick_replies=quick_replies,
+    page.send(sender_id, "~Quick Menu~", quick_replies=quick_replies,
             metadata="DEVELOPER_DEFINED_METADATA")
 
 

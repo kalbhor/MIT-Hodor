@@ -76,7 +76,7 @@ def attendance(values, data, group):
         output_att = "You've attended {}/{} classes; You have {}% attendance in {} right now.\n"
         output_bunk ="After bunking one class, you will have {}%.\n"
     except KeyError:
-        output_att = "{}/{} {}% attendance in {}.\n\n"
+        output_att = "{}/{} {}% attendance in {}.\n"
         output_bunk = "{}% after 1 bunk.\n"
 
     slcm_error = "SLCM hasn't been updated for {}\n"
@@ -107,7 +107,7 @@ def attendance(values, data, group):
         x = []
         i = 0
         while i < len(resp):
-            x.append(resp[i]+resp[i+1])
+            x.append(resp[i]+'\n'+resp[i+1])
             i += 2
         resp = x 
 

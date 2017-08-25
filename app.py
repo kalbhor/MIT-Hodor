@@ -96,8 +96,12 @@ def message_handler(event):
             try:
                 user.name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
                 db.session.commit()
-            except:
-                pass
+            except KeyError:
+                if 'name' in user_profile:
+                    user.name = "{}".format(user_profile['name'])
+                    db.session.commit()
+                else:
+                    pass
 
         if user.rollno  == None:
             ### User has entered regno ###

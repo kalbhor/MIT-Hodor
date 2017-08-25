@@ -39,15 +39,33 @@ class User(db.Model):
     def __repr__(self):
         return '< <Name>{} <Rollno>{} >'.format(self.name, self.rollno)
 
+
+@page.handle_delivery
+def delivery_handler(payload):
+    print("Message delivered")
+
+@page.handle_echo
+def echo_handler(payload):
+    print('Message echoed')
+
+@page.handle_postback
+def postback_handler(payload):
+    print('postback pressed')
+
+@page.after_send
+def after_send(payload, response):
+    print("Done")
+
+@page.handle_read
+def read_hanlder(payload):
+    print("Message read by user")
+
+
 ### Handles Fb verification ###
 @app.route('/', methods=['POST'])
 def webhook():
     page.handle_webhook(request.get_data(as_text=True))
     return "ok"
-
-@page.handle_delivery
-def delivery_handler(payload):
-    print("Message delivered")
 
 ### Main method (Handles user messages, db) ###
 @page.handle_message
@@ -126,10 +144,6 @@ def message_handler(event):
                 page.send(sender_id, responder.curse)
 
 
-
-@page.after_send
-def after_send(payload, response):
-    print("Done")
 
 
 if __name__ == '__main__':

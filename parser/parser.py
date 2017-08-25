@@ -97,4 +97,6 @@ def attendance(values, data, group):
         except KeyError:
             pass
 
+    
+    resp = resp.splitlines()
     return resp

@@ -138,7 +138,8 @@ def message_handler(event):
                 group = user.group
                 attendance_data = scraper.attendance(driver)
                 response = parser.attendance(resp, attendance_data, group)
-                page.send(sender_id, str(response))
+                for resp in response:
+                    page.send(sender_id, str(resp))
 
             if 'curse' in resp:
                 page.send(sender_id, responder.curse)

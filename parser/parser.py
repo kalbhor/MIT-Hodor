@@ -57,9 +57,11 @@ def timetable(values, data):
 def attendance(values, data, group):
     try:
         subs = values['subject']
-        output = "You've attended {} classes out of {}; You have {}% attendance in {} right now. \n"
+        output_att = "You've attended {} classes out of {}; You have {}% attendance in {} right now. \n"
+        output_bunk ="After bunking one class, you will have {}%. \n\n"
     except KeyError:
-        output = "{}/{} {}% attendance in {}. \n"
+        output_att = "{}/{} {}% attendance in {}. \n"
+        output_bunk = "{}% after 1 bunk. \n"
 
         if group == 'CHEMISTRY GROUP':
             subs = [{'value': 'BIO'}, {'value': 'MATHS1'},
@@ -82,7 +84,7 @@ def attendance(values, data, group):
     for sub in subs:
         sub = sub['value']
         try:
-            resp += output.format(data[sub]['present'], data[sub]['totalclasses'], data[sub]['percent'], sub)
+            resp += output_att.format(data[sub]['present'], data[sub]['totalclasses'], data[sub]['percent'], sub)
         except KeyError:
             resp += "SLCM hasn't been updated for {}\n\n".format(sub)
 
@@ -91,7 +93,7 @@ def attendance(values, data, group):
             after_percent = round(after_percent, 2)
             if 'attendance' in values:
                 if any(vals['value'] == 'bunk' for vals in values['attendance']):
-                    resp += 'After bunking one class, you will have {}%. \n\n'.format(after_percent)
+                    resp += output_bunk.format(after_percent)
         except KeyError:
             pass
 

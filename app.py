@@ -153,6 +153,9 @@ def message_handler(event):
             if 'curse' in resp:
                 page.send(sender_id, responder.curse)
 
+            if 'hodor' in resp:
+                page.send(sender_id, "HODOOOOOR!")
+
 
 
 

@@ -138,6 +138,7 @@ def message_handler(event):
                 group = user.group
                 attendance_data = scraper.attendance(driver)
                 response = parser.attendance(resp, attendance_data, group)
+                print(str(response))
                 for resp in response:
                     try:
                         page.send(sender_id, str(resp))

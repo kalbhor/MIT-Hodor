@@ -21,10 +21,10 @@ dbase = database.handler(db)
 responder = responses.messages()
 
 quick_replies = [
+        fbmq.QuickReply(title="What can you do?", payload="WHAT"),
         fbmq.QuickReply(title="Attendance", payload="ATTENDANCE"),
         fbmq.QuickReply(title="Timetable", payload="TIMETABLE"),
         fbmq.QuickReply(title="Teacher Guardian", payload="TEACHER"),
-        fbmq.QuickReply(title="What can you do?", payload="WHAT"),
     ]
 
 ### DB Skeleton ###

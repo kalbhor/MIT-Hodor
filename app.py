@@ -20,6 +20,11 @@ wit_client = Wit(os.environ["WIT_TOKEN"])
 dbase = database.handler(db)
 responder = responses.messages()
 
+quick_replies = [
+        fbmq.QuickReply(title="Attendance", payload="ATTENDANCE"),
+        #QuickReply(title="Timetable", payload="TIMETABLE"),
+        #QuickReply(title="Teacher Guardian", payload="TEACHER"),
+    ]
 
 ### DB Skeleton ###
 class User(db.Model):
@@ -38,6 +43,24 @@ class User(db.Model):
 
     def __repr__(self):
         return '< <Name>{} <Rollno>{} >'.format(self.name, self.rollno)
+
+@page.callback(['ATTENDANCE'])
+def quick_attendance(payload, event):
+    sender_id = event.sender_id
+    user = User.query.filter_all(fbid=sender_id).first()
+    if user is None:
+        page.send("You haven't registered yet")
+        return
+    group = user.group
+    driver = scraper.login(user.rollno, user.password)
+    attendance_data = scraper.attendance(driver)
+    response = parser.attendance({}, attendance_data, group)
+    print(str(response))
+    for resp in response:
+        try:
+            page.send(sender_id, str(resp))
+        except ValueError:
+            print('Faced value error {}'.format(resp))
 
 
 @page.handle_delivery
@@ -155,6 +178,9 @@ def message_handler(event):
 
             if 'hodor' in resp:
                 page.send(sender_id, "HODOOOOOR!")
+    
+    page.send(sender_id, "I can do this stuff", quick_replies=quick_replies,
+            metadata="DEVELOPER_DEFINED_METADATA")
 
 
 

@@ -183,6 +183,7 @@ def message_handler(event):
 
             if 'showoff' in resp:
                 page.send(sender_id,responder.menu)
+                page.send(sender_id, "Check out this video : {}".format(responder.video))
     
             scraper.end(driver)
             page.send(sender_id, "*Quick Menu*", quick_replies=quick_replies,

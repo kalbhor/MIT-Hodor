@@ -15,6 +15,8 @@ class messages:
 
     TOS = "Terms of service : "
 
+    video = "https://www.youtube.com/watch?v=LVxn8qkhs1Q"
+
     menu = """
     Hey, I am MIT Hodor, a messenger bot.\n
     I can tell you about:\n

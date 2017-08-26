@@ -1,7 +1,7 @@
 class messages:
     new_user = "I can't recognise you.\n\nPlease enter your SLCM registration number"
 
-    new_user_pass = "Please enter your SLCM password (Don't worry, we can't view it)"
+    new_user_pass = "Please enter your SLCM password"
 
     wrong = "You've entered wrong details"
 

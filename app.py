@@ -103,6 +103,13 @@ def message_handler(event):
                 else:
                     pass
 
+        if user.group is None:
+            driver = scraper.login(user.rollno, user.password)
+            if driver is not None:
+                group = scraper.group(driver)
+                user.group = group
+                db,session.commit()
+
         if user.rollno  == None:
             ### User has entered regno ###
             dbase.regno(message, user)

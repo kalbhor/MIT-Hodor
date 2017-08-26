@@ -108,7 +108,7 @@ def message_handler(event):
             if driver is not None:
                 group = scraper.group(driver)
                 user.group = group
-                db,session.commit()
+                db.session.commit()
 
         if user.rollno  == None:
             ### User has entered regno ###

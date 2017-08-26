@@ -26,5 +26,6 @@ class messages:
     - Lakshay Kalbhor : fb.com/KalbhorLakshay
     - Neel Vashisht : fb.com/profile.neel
     - Ananya Kaushik: fb.com/ananya.kaushik.75\n
-NOTE : I am currently under construction, so sometimes you might get double replies, etc.\n\n
+
+    By using this bot, you agree to the terms of service : https://kalbhor.github.io/MITHodor/
     """

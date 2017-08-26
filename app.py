@@ -140,7 +140,11 @@ def message_handler(event):
             page.typing_on(sender_id)
             resp = parser.witintent(message, wit_client)
 
-            driver = scraper.login(user.rollno, user.password)
+            try:
+                driver = scraper.login(user.rollno, user.password)
+            except:
+                driver = None
+                resp = {}
             print(resp)
             if resp != {}:
                 if driver is None:

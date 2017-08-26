@@ -74,6 +74,17 @@ def attendance(values, data, group):
                     {'value': 'MOS'}, {'value': 'BME'},
                     {'value': 'WORKSHOP'}]
 
+    else:
+        subs = [{'value': 'BME'}, {'value': 'ENG'},
+                    {'value': 'MATHS1'}, {'value': 'EG'},
+                    {'value': 'PHY'}, {'value': 'PHYLAB'},
+                    {'value': 'MOS'}, {'value': 'BME'},
+                    {'value': 'WORKSHOP'},{'value': 'BIO'}, {'value': 'MATHS1'},
+                    {'value': 'EVS'}, {'value': 'PSUC'},
+                    {'value': 'PSUCLAB'}, {'value': 'EG'},
+                    {'value': 'CHEM'}, {'value': 'BET'},
+                    {'value': 'CHEMLAB'}]
+
 
     try:
         subs = values['subject']

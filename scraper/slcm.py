@@ -102,6 +102,7 @@ def guardian(driver):
 
 def group(driver):
     driver.get("http://slcm.manipal.edu/Academics.aspx")
+    sleep(1.5)
     group = driver.find_element_by_id("ContentPlaceHolder1_lblGroup")
 
     return group.text

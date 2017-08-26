@@ -127,6 +127,7 @@ def message_handler(event):
                     ### Goes back to step 1 (Enter regno) ###
                     dbase.delete(user)
                     page.send(sender_id, responder.wrong)
+                    page.send(sender_id, "Message me again to restart the registration")
             else:
                     driver = scraper.login(user.rollno, user.password)
                     group = scraper.group(driver)

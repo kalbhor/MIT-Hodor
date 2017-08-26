@@ -103,7 +103,7 @@ def message_handler(event):
                 else:
                     pass
 
-        if user.group is None:
+        if user.group is None and user.rollno is not None and user.password is not None:
             driver = scraper.login(user.rollno, user.password)
             if driver is not None:
                 group = scraper.group(driver)

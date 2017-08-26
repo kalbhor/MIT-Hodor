@@ -109,6 +109,7 @@ def message_handler(event):
                 group = scraper.group(driver)
                 user.group = group
                 db.session.commit()
+                scraper.end(driver)
 
         if user.rollno  == None:
             ### User has entered regno ###
@@ -128,15 +129,17 @@ def message_handler(event):
                     group = scraper.group(driver)
                     dbase.group(group, user)
                     page.send(sender_id, responder.verified)
+                    scraper.end(driver)
 
         else:
             user = User.query.filter_by(fbid = sender_id).first()
 
             page.typing_on(sender_id)
             resp = parser.witintent(message, wit_client)
+
+            driver = scraper.login(user.rollno, user.password)
             print(resp)
             if resp != {}:
-                driver = scraper.login(user.rollno, user.password)
                 if driver is None:
                     dbase.delete(user)
             else:
@@ -181,6 +184,7 @@ def message_handler(event):
             if 'showoff' in resp:
                 page.send(sender_id,responder.menu)
     
+            scraper.end(driver)
             page.send(sender_id, "*Quick Menu*", quick_replies=quick_replies,
             metadata="DEVELOPER_DEFINED_METADATA")
 

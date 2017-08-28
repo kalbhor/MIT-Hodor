@@ -1,10 +1,11 @@
+import fbmq
 import os
-import scraper.slcm as scraper
 import parser.parser as parser
 import parser.responses as responses
 import parser.dbase as database
 import requests
-import fbmq
+import scraper.slcm as scraper
+
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from wit import Wit
@@ -52,11 +53,11 @@ def delivery_handler(payload):
 
 @page.handle_echo
 def echo_handler(payload):
-    print('Message echoed')
+    print("Message echoed")
 
 @page.handle_postback
 def postback_handler(payload):
-    print('postback pressed')
+    print("Postback pressed")
 
 @page.after_send
 def after_send(payload, response):
@@ -115,7 +116,7 @@ def message_handler(event):
                 db.session.commit()
                 scraper.end(driver)
 
-        if user.rollno  == None:
+        if user.rollno == None:
             ### User has entered regno ###
             message = message[:80] # If message is above 80 chars, its most probably wrong.
             # Wrong details will be handled by driver

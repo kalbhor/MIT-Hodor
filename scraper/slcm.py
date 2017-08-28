@@ -122,9 +122,10 @@ def attendance(driver):
 
     attendance = {}
 
-    i = 0
-    while i < len(values):
-        attendance[SUBJECTS[values[i+1]]] = {
+    try:
+        i = 0
+        while i < len(values):
+            attendance[SUBJECTS[values[i+1]]] = {
             "year" : values[i],
             "sem" : values[i+2],
             "totalclasses" : values[i+3],
@@ -132,14 +133,10 @@ def attendance(driver):
             "absent" : values[i+5],
             "percent" : values[i+6],
             }
-        i+=7
+            i+=7
+    except KeyError:
+        print(attendance)
 
 
     return attendance
-
-if __name__ == '__main__':
-    driver = login("170906246", "MadarchodNeel13")
-    x = group(driver)
-    print(x)
-
 

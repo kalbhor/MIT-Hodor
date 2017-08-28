@@ -117,10 +117,13 @@ def message_handler(event):
 
         if user.rollno  == None:
             ### User has entered regno ###
+            message = message[:80] # If message is above 80 chars, its most probably wrong.
+            # Wrong details will be handled by driver
             dbase.regno(message, user)
             page.send(sender_id, responder.new_user_pass)
         elif user.password == None:
             ### User has entered password ###
+            message = message[:80]
             dbase.password(message, user)
 
             try:

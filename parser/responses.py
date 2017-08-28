@@ -31,3 +31,24 @@ class messages:
 
     By using this bot, you agree to the terms of service : https://kalbhor.github.io/MITHodor/
     """
+
+    features = """ 
+    You can use the quick menu to access basic features such as : \n
+    - The day's timetable
+    - Current attendance 
+    - Teacher guardian name
+    - Bunk status for all subjects 
+
+    \n\n
+
+    You can also ask me complex questions such as : \n
+    - What is Monday's timetable? 
+    - What is my guardian's number?
+    - What is my attendance in maths?
+    - Can I bunk maths? 
+    \n
+    etc \n
+
+    For a complete walkthrough the features, check out : {}
+    """.format(video)
+

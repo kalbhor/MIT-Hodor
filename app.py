@@ -123,18 +123,21 @@ def message_handler(event):
             ### User has entered password ###
             dbase.password(message, user)
 
-            if scraper.login(user.rollno, user.password) is None:
-                    ### Remove record if wrong details have been entered ###
-                    ### Goes back to step 1 (Enter regno) ###
-                    dbase.delete(user)
-                    page.send(sender_id, responder.wrong)
-                    page.send(sender_id, "Message me again to restart the registration")
-            else:
-                    driver = scraper.login(user.rollno, user.password)
-                    group = scraper.group(driver)
-                    dbase.group(group, user)
-                    page.send(sender_id, responder.verified)
-                    scraper.end(driver)
+            try:
+                if scraper.login(user.rollno, user.password) is None:
+                        ### Remove record if wrong details have been entered ###
+                        ### Goes back to step 1 (Enter regno) ###
+                        dbase.delete(user)
+                        page.send(sender_id, responder.wrong)
+                        page.send(sender_id, "Message me again to restart the registration")
+                else:
+                        driver = scraper.login(user.rollno, user.password)
+                        group = scraper.group(driver)
+                        dbase.group(group, user)
+                        page.send(sender_id, responder.verified)
+                        scraper.end(driver)
+            except TypeError:
+                print('Wrong input')
 
         else:
             user = User.query.filter_by(fbid = sender_id).first()

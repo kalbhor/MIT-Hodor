@@ -94,15 +94,14 @@ def message_handler(event):
         if user.name is None:
             user_profile = page.get_user_profile(sender_id)
             print(user_profile)
-            try:
-                user.name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
-                db.session.commit()
-            except KeyError:
-                if 'name' in user_profile:
-                    user.name = "{}".format(user_profile['name'])
+            if user_profile is not None:
+                try:
+                    user.name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
                     db.session.commit()
-                else:
-                    pass
+                except KeyError:
+                    if 'name' in user_profile:
+                        user.name = "{}".format(user_profile['name'])
+                        db.session.commit()
 
         if user.group is None and user.rollno is not None and user.password is not None:
             try:

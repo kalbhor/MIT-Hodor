@@ -198,7 +198,7 @@ def message_handler(event):
             if 'showoff' in resp:
                 page.send(sender_id, responder.features)
     
-            if scraper is not None:
+            if driver is not None:
                 scraper.end(driver)
             page.send(sender_id, "*Quick Menu*", quick_replies=quick_replies,
             metadata="DEVELOPER_DEFINED_METADATA")

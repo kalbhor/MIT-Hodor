@@ -70,8 +70,8 @@ def read_hanlder(payload):
 ### Handles Fb verification ###
 @app.route('/', methods=['POST'])
 def webhook():
-    page.handle_webhook(request.get_data(as_text=True))
-    return "ok"
+    #page.handle_webhook(request.get_data(as_text=True))
+    #return "ok"
 
 ### Main method (Handles user messages, db) ###
 @page.handle_message

@@ -180,14 +180,15 @@ def message_handler(event):
 
             if 'attendance' in resp or 'subject' in resp:
                 group = user.group
-                attendance_data = scraper.attendance(driver)
-                response = parser.attendance(resp, attendance_data, group)
-                print(str(response))
-                for resp in response:
-                    try:
-                        page.send(sender_id, str(resp))
-                    except ValueError:
-                        print('Faced value error {}'.format(resp))
+                if driver is not None:
+                    attendance_data = scraper.attendance(driver)
+                    response = parser.attendance(resp, attendance_data, group)
+                    print(str(response))
+                    for resp in response:
+                        try:
+                            page.send(sender_id, str(resp))
+                        except ValueError:
+                            print('Faced value error {}'.format(resp))
 
             if 'curse' in resp:
                 page.send(sender_id, responder.curse)

@@ -25,9 +25,9 @@ class messages:
     - Your Teacher guardian
     - Whether you can bunk a class or not\n
     I was built by
-    - Lakshay Kalbhor : fb.com/KalbhorLakshay
-    - Neel Vashisht : fb.com/profile.neel
-    - Ananya Kaushik: fb.com/ananya.kaushik.75\n
+    - Lakshay Kalbhor : fb.com/KalbhorLakshay (Developer)
+    - Neel Vashisht : fb.com/profile.neel (Developer)
+    - Ananya Kaushik: fb.com/ananya.kaushik.75 (Graphics & Page Management)\n
 
     By using this bot, you agree to the terms of service : https://kalbhor.github.io/MITHodor/
     """

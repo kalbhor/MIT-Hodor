@@ -103,51 +103,53 @@ def message_handler(event):
                         user.name = "{}".format(user_profile['name'])
                         db.session.commit()
 
-        if user.group is None and user.rollno is not None and user.password is not None:
+        if user.group is None and user.password is not None:
             try:
                 driver = scraper.login(user.rollno, user.password)
-            except:
-                driver = None
-            if driver is not None:
                 group = scraper.group(driver)
                 user.group = group
                 db.session.commit()
                 scraper.end(driver)
 
+            except:
+                pass
+
         if user.rollno  == None:
             ### User has entered regno ###
             if message is None:
                 message = "xyz"
+
             message = message[:80] # If message is above 80 chars, its most probably wrong.
             # Wrong details will be handled by driver
             dbase.regno(message, user)
             page.send(sender_id, responder.new_user_pass)
+
         elif user.password == None:
             ### User has entered password ###
             if message is None:
                 message = "xyz"
+
             message = message[:80]
             dbase.password(message, user)
 
             try:
-                if scraper.login(user.rollno, user.password) is None:
+                check_driver = scraper.login(user.rollno, user.password)
+                if check_driver is None:
                         ### Remove record if wrong details have been entered ###
                         ### Goes back to step 1 (Enter regno) ###
                         dbase.delete(user)
                         page.send(sender_id, responder.wrong)
                         page.send(sender_id, "Message me again to restart the registration")
                 else:
-                        driver = scraper.login(user.rollno, user.password)
-                        group = scraper.group(driver)
+                        group = scraper.group(check_driver)
                         dbase.group(group, user)
                         page.send(sender_id, responder.verified)
-                        scraper.end(driver)
+                        scraper.end(check_driver)
             except TypeError:
                 print('Wrong input')
 
         else:
             user = User.query.filter_by(fbid = sender_id).first()
-
             page.typing_on(sender_id)
             resp = parser.witintent(message, wit_client)
 
@@ -156,12 +158,8 @@ def message_handler(event):
             except:
                 driver = None
                 resp = {}
-            print(resp)
-            if resp != {}:
-                if driver is None:
-                    dbase.delete(user)
-            else:
-                page.send(sender_id, "Hodor!")
+                dbase.delete(user)
+
             ### Parsing responses begins here ###
 
             if 'greetings' in resp:
@@ -205,7 +203,8 @@ def message_handler(event):
     
             if driver is not None:
                 scraper.end(driver)
-            page.send(sender_id, "*Quick Menu*", quick_replies=quick_replies,
+
+            page.send(sender_id, "Hodor!", quick_replies=quick_replies,
             metadata="DEVELOPER_DEFINED_METADATA")
 
 

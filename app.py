@@ -20,6 +20,7 @@ wit_client = Wit(os.environ["WIT_TOKEN"])
 dbase = database.handler(db)
 responder = responses.messages()
 
+### Quick Replies on messenger ###
 quick_replies = [
         fbmq.QuickReply(title="What can you do?", payload="WHAT"),
         fbmq.QuickReply(title="Attendance", payload="ATTENDANCE"),
@@ -37,11 +38,11 @@ class User(db.Model):
     name = db.Column(db.String(80), nullable=True)
 
     def __init__(self, fbid, rollno=None, password=None, group=None, name=None):
-        self.fbid = fbid
-        self.rollno = rollno
-        self.password = password
-        self.group = group
-        self.name = name
+        self.fbid = fbid # Unique fbid
+        self.rollno = rollno # User's SLCM reg no
+        self.password = password # User's password
+        self.group = group # User's group (Chem or Phy)
+        self.name = name # User's name
 
     def __repr__(self):
         return '< <Name>{} <Rollno>{} >'.format(self.name, self.rollno)
@@ -85,34 +86,26 @@ def message_handler(event):
 
     if client is None:
         ### User doesn't exist on DB ###
-        user = User(sender_id)
+
+        user = User(sender_id) # Create new user with fbid
         dbase.new_user(sender_id, user)
         page.send(sender_id, responder.menu)
         page.send(sender_id, responder.new_user)
     else:
+        ### Fetch the created user through fbid ###
+
         user = User.query.filter_by(fbid = sender_id).first()
+
         if user.name is None:
             user_profile = page.get_user_profile(sender_id)
-            print(user_profile)
+
             if user_profile is not None:
-                try:
+                if 'first_name' in user_profile and 'last_name' in user_profile: 
                     user.name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
-                    db.session.commit()
-                except KeyError:
-                    if 'name' in user_profile:
-                        user.name = "{}".format(user_profile['name'])
-                        db.session.commit()
+                elif 'name' in user_profile:
+                    user.name = "{}".format(user_profile['name'])
 
-        if user.group is None and user.password is not None:
-            try:
-                driver = scraper.login(user.rollno, user.password)
-                group = scraper.group(driver)
-                user.group = group
                 db.session.commit()
-                scraper.end(driver)
-
-            except:
-                pass
 
         if user.rollno  == None:
             ### User has entered regno ###
@@ -147,8 +140,26 @@ def message_handler(event):
                         scraper.end(check_driver)
             except TypeError:
                 print('Wrong input')
+                db.session.commit()
+
+        elif user.group is None:
+            ### Fetch user group ###
+            ### Only valid for 1st year ###
+            try:
+                driver = scraper.login(user.rollno, user.password)
+                group = scraper.group(driver)
+                user.group = group
+                db.session.commit()
+                scraper.end(driver)
+
+            except:
+                pass
 
         else:
+            ##################################################
+            ##### HANDLE RESPONSES FROM REGISTERED USERS #####
+            ##################################################
+
             user = User.query.filter_by(fbid = sender_id).first()
             page.typing_on(sender_id)
             resp = parser.witintent(message, wit_client)
@@ -210,3 +221,4 @@ def message_handler(event):
 
 if __name__ == '__main__':
     app.run(debug=True)
+

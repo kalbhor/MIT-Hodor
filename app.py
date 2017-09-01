@@ -140,7 +140,6 @@ def message_handler(event):
                 else:
                         page.send(sender_id, responder.verified)
                         scraper.end(check_driver)
-                        page.send(sender_id, "Hodor!", quick_replies=quick_replies,metadata="DEVELOPER_DEFINED_METADATA")
             except TypeError:
                 print('Wrong input')
 

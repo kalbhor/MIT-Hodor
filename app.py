@@ -205,8 +205,9 @@ def message_handler(event):
 
             if 'attendance' in resp or 'subject' in resp:
                 group = user.group
+                semester = user.semester
                 if driver is not None:
-                    attendance_data = scraper.attendance(driver)
+                    attendance_data = scraper.attendance(driver, semester, group)
                     response = parser.attendance(resp, attendance_data, group)
                     print(str(response))
                     for resp in response:

@@ -105,7 +105,30 @@ def group(driver):
     sleep(1.5)
     group = driver.find_element_by_id("ContentPlaceHolder1_lblGroup")
 
+    if group == "":
+        return None
+
     return group.text
+
+def semester(driver):
+    numerals = { "I" : 1,
+                "II" : 2,
+                "III" : 3,
+                "IV" : 4,
+                "V" : 5,
+                "VI" : 6,
+                "VII" : 7,
+                "VIII" : 8,
+                }
+    driver.get("http://slcm.manipal.edu/Academics.aspx")
+    sleep(1.5)
+    semester = driver.find_element_by_id("ContentPlaceHolder1_lblSemester")
+    semester = semester.text
+
+    if semester in numerals:
+        return numerals[semester]
+
+    return None 
 
  
 def attendance(driver):
@@ -135,8 +158,12 @@ def attendance(driver):
             }
             i+=7
     except KeyError:
-        print(attendance)
+        pass
 
 
     return attendance
 
+if __name__ == '__main__':
+    driver = login('170906246', 'linus_torvalds')
+    sem = semester(driver)
+    print(sem)

@@ -104,11 +104,11 @@ def message_handler(event):
 
             if user_profile is not None:
                 if 'first_name' in user_profile and 'last_name' in user_profile: 
-                    user.name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
+                    user_name = "{} {}".format(user_profile['first_name'], user_profile['last_name'])
                 elif 'name' in user_profile:
-                    user.name = "{}".format(user_profile['name'])
+                    user_name = "{}".format(user_profile['name'])
 
-                db.session.commit()
+                dbase.name(user_name, user)
 
         if user.rollno  == None:
             ### User has entered regno ###
@@ -138,8 +138,6 @@ def message_handler(event):
                         page.send(sender_id, responder.wrong)
                         page.send(sender_id, "Message me again to restart the registration")
                 else:
-                        group = scraper.group(check_driver)
-                        dbase.group(group, user)
                         page.send(sender_id, responder.verified)
                         scraper.end(check_driver)
                         page.send(sender_id, "Hodor!", quick_replies=quick_replies,metadata="DEVELOPER_DEFINED_METADATA")
@@ -152,8 +150,7 @@ def message_handler(event):
             try:
                 driver = scraper.login(user.rollno, user.password)
                 group = scraper.group(driver)
-                user.group = group
-                db.session.commit()
+                dbase.group(group, user)
                 scraper.end(driver)
 
             except:
@@ -163,8 +160,7 @@ def message_handler(event):
             try:
                 driver = scraper.login(user.rollno, user.password)
                 sem = scraper.semester(driver)
-                user.semester = str(sem)
-                db.session.commit()
+                dbase.semester(sem, user)
                 scraper.end(driver)
             except:
                 pass

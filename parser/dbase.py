@@ -28,3 +28,13 @@ class handler:
     def delete(self, user):
         self.db.session.delete(user)
         self.db.session.commit()
+
+    def name(self, name, user):
+        user.name = name
+        db.session.commit()
+
+    def semester(self, sem, user):
+        user.semester = sem
+        db.session.commit()
+
+

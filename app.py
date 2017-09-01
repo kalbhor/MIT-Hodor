@@ -138,31 +138,15 @@ def message_handler(event):
                         page.send(sender_id, responder.wrong)
                         page.send(sender_id, "Message me again to restart the registration")
                 else:
-                        page.send(sender_id, responder.verified)
+                        group = scraper.group(check_driver)
+                        sem = scraper.semester(check_driver)
+                        dbase.group(group, user)
+                        dbase.semester(sem, user)
                         scraper.end(check_driver)
+                        page.send(sender_id, responder.verified)
             except TypeError:
                 print('Wrong input')
 
-        if user.group is None:
-            ### Fetch user group ###
-            ### Only valid for 1st year ###
-            try:
-                driver = scraper.login(user.rollno, user.password)
-                group = scraper.group(driver)
-                dbase.group(group, user)
-                scraper.end(driver)
-
-            except:
-                pass
-
-        if user.semester is None:
-            try:
-                driver = scraper.login(user.rollno, user.password)
-                sem = scraper.semester(driver)
-                dbase.semester(sem, user)
-                scraper.end(driver)
-            except:
-                pass
         else:
             ##################################################
             ##### HANDLE RESPONSES FROM REGISTERED USERS #####

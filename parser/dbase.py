@@ -31,10 +31,10 @@ class handler:
 
     def name(self, name, user):
         user.name = name
-        db.session.commit()
+        self.db.session.commit()
 
     def semester(self, sem, user):
         user.semester = sem
-        db.session.commit()
+        self.db.session.commit()
 
 

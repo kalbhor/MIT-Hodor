@@ -134,6 +134,7 @@ def message_handler(event):
                         ### Remove record if wrong details have been entered ###
                         ### Goes back to step 1 (Enter regno) ###
                         dbase.delete(user)
+                        db.session.commit()
                         page.send(sender_id, responder.wrong)
                         page.send(sender_id, "Message me again to restart the registration")
                 else:
@@ -144,9 +145,8 @@ def message_handler(event):
                         page.send(sender_id, "Hodor!", quick_replies=quick_replies,metadata="DEVELOPER_DEFINED_METADATA")
             except TypeError:
                 print('Wrong input')
-                db.session.commit()
 
-        elif user.group is None:
+        if user.group is None:
             ### Fetch user group ###
             ### Only valid for 1st year ###
             try:
@@ -159,7 +159,7 @@ def message_handler(event):
             except:
                 pass
 
-        elif user.semester is None:
+        if user.semester is None:
             try:
                 driver = scraper.login(user.rollno, user.password)
                 sem = scraper.semester(driver)

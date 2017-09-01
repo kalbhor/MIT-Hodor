@@ -31,7 +31,37 @@ SUBJECTS = {
                 "ENGINEERING GRAPHICS - I LAB": "EG",
             }
         
-        }}
+        },
+    "2" : 
+        {"CHEMISTRY GROUP": {
+            "BIOLOGY FOR ENGINEERS": "BIO",
+            "ENGINEERING MATHEMATICS - I": "MATHS1",
+            "ENVIRONMENTAL STUDIES": "EVS",
+            "PROBLEM SOLVING USING COMPUTERS": "PSUC",
+            "ENGINEERING GRAPHICS - I": "EG",
+            "ENGINEERING GRAPHICS - I LAB": "EG",
+            "ENGINEERING CHEMISTRY": "CHEM",
+            "BASIC ELECTRICAL TECHNOLOGY": "BET",
+            "ENGINEERING CHEMISTRY LAB": "CHEMLAB",
+            "PSUC LAB": "PSUCLAB",
+        },
+
+        "PHYSICS GROUP": {
+                "BASIC MECHANICAL ENGINEERING": "BME",
+                "ENGINEERING MATHEMATICS - I": "MATHS1",
+                "COMMUNICATION SKILLS IN ENGLISH": "ENG",
+                "ENGINEERING PHYSICS": "PHY",
+                "ENGINEERING PHYSICS LAB": "PHYLAB",
+                "MECHANICS OF SOLIDS": "MOS",
+                "BASIC ELECTRONICS": "BE",
+                "WORKSHOP PRACTICE": "WORKSHOP",
+                "ENGINEERING GRAPHICS - I": "EG",
+                "ENGINEERING GRAPHICS - I LAB": "EG",
+            }
+        
+        },
+
+}
 
 
 def end(driver):
@@ -145,6 +175,15 @@ def semester(driver):
 
     return None
 
+def construct_dict(semester, group):
+    att = {}
+    subjects = SUBJECTS[semester][group]
+    
+    for subs in subjects:
+        att[subs] = ""
+
+    return att
+    
 
 def attendance(driver, semester, group):
     driver.get("http://slcm.manipal.edu/Academics.aspx")
@@ -158,41 +197,23 @@ def attendance(driver, semester, group):
     fields = [n.text for n in fields]
     values = [n.text for n in values]
 
-    attendance = {}
+    attendance = construct_dict(semester, group)
 
-    if group is None:
-        try:
-            i = 0
-            while i < len(values):
-                val = SUBJECTS[semester][values[i+1]]
-                attendance[val] = {
-                    "year": values[i],
-                    "sem": values[i + 2],
-                    "totalclasses": values[i + 3],
-                    "present": values[i + 4],
-                    "absent": values[i + 5],
-                    "percent": values[i + 6],
-                }
-                i += 7
-        except KeyError:
-            pass
-
-    elif group is not None and semester == '1':
-        try:
-            i = 0
-            while i < len(values):
-                val = SUBJECTS[semester][group][values[i+1]]
-                attendance[val] = {
-                    "year": values[i],
-                    "sem": values[i + 2],
-                    "totalclasses": values[i + 3],
-                    "present": values[i + 4],
-                    "absent": values[i + 5],
-                    "percent": values[i + 6],
-                }
-                i += 7
-        except KeyError:
-            pass
+    try:
+        i = 0
+        while i < len(values):
+            val = SUBJECTS[semester][group][values[i+1]]
+            attendance[val] = {
+                "year": values[i],
+                "sem": values[i + 2],
+                "totalclasses": values[i + 3],
+                "present": values[i + 4],
+                "absent": values[i + 5],
+                "percent": values[i + 6],
+            }
+            i += 7
+    except KeyError:
+        pass
 
     return attendance
 

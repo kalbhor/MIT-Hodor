@@ -103,9 +103,14 @@ def attendance(values, data, group):
     for sub in subs:
         sub = sub['value']
         try:
-            resp += output_att.format(data[sub]['present'], data[sub]['totalclasses'], data[sub]['percent'], sub)
+            if data[sub] != "":
+                resp += output_att.format(data[sub]['present'], data[sub]['totalclasses'], data[sub]['percent'], sub)
+
+            else:
+                resp += slcm_error.format(sub)
         except KeyError:
-            resp += slcm_error.format(sub)
+            ### WIT Edge case ###
+            pass
 
         try:
             after_percent = 100 * int(data[sub]['present'])/(int(data[sub]['totalclasses'])+1)

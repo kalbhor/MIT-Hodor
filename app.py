@@ -36,16 +36,19 @@ class User(db.Model):
     password = db.Column(db.String(80), nullable=True)
     group = db.Column(db.String(80), nullable=True)
     name = db.Column(db.String(80), nullable=True)
+    semester = db.Column(db.String(2), nullable=True)
 
-    def __init__(self, fbid, rollno=None, password=None, group=None, name=None):
+
+    def __init__(self, fbid, rollno=None, password=None, group=None, name=None, semester=None):
         self.fbid = fbid # Unique fbid
         self.rollno = rollno # User's SLCM reg no
         self.password = password # User's password
         self.group = group # User's group (Chem or Phy)
         self.name = name # User's name
+        self.semester = semester # User's sem
 
     def __repr__(self):
-        return '< <Name>{} <Rollno>{} >'.format(self.name, self.rollno)
+        return '(<Name>{} <Rollno>{})'.format(self.name, self.rollno)
 
 @page.handle_delivery
 def delivery_handler(payload):
@@ -155,6 +158,15 @@ def message_handler(event):
             except:
                 pass
 
+        elif user.semester is None:
+            try:
+                driver = scraper.login(user.rollno, user.password)
+                sem = scraper.semester(driver)
+                user.semester = str(sem)
+                db.session.commit()
+                scraper.end(driver)
+            except:
+                pass
         else:
             ##################################################
             ##### HANDLE RESPONSES FROM REGISTERED USERS #####

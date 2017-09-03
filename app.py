@@ -142,6 +142,10 @@ def message_handler(event):
                         sem = scraper.semester(check_driver)
                         dbase.group(group, user)
                         dbase.semester(sem, user)
+                        ##### Temp for seniors #####
+                        if sem is not in ['1', '2']:
+                            page.send(sender_id, "Sorry, MIT Hodor currently just works for freshers.\nIt should soon work for the rest after sessionals (mid September)")
+                            dbase.delete(user)
                         scraper.end(check_driver)
                         page.send(sender_id, responder.verified)
             except TypeError:

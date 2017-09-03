@@ -143,7 +143,7 @@ def message_handler(event):
                         dbase.group(group, user)
                         dbase.semester(sem, user)
                         ##### Temp for seniors #####
-                        if sem not in ['1', '2']:
+                        if sem not in [1, 2]:
                             page.send(sender_id, "Sorry, MIT Hodor currently just works for freshers.\nIt should soon work for the rest after sessionals (mid September)")
                             dbase.delete(user)
                         scraper.end(check_driver)

@@ -183,9 +183,12 @@ def message_handler(event):
                     page.send(sender_id, fbmq.Template.Buttons("Smart response", [fbmq.Template.ButtonPhoneNumber("Call now", phone)]))
 
             if 'timetable' in resp:
-                timetable_data = scraper.timetable(driver)
-                response = parser.timetable(resp, timetable_data)
-                page.send(sender_id, str(response))
+                try:
+                    timetable_data = scraper.timetable(driver)
+                    response = parser.timetable(resp, timetable_data)
+                    page.send(sender_id, str(response))
+                except:
+                    page.send(sender_id, "Encountered an error")
 
             if 'attendance' in resp or 'subject' in resp:
                 group = user.group

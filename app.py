@@ -204,7 +204,7 @@ def message_handler(event):
                             print('Faced value error {}'.format(resp))
 
             if 'curse' in resp:
-                page.send(sender_id, responder.curse)
+                page.send(sender_id, message)
 
             if 'hodor' in resp:
                 page.send(sender_id, "HODOOOOOR!")

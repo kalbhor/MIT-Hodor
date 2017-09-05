@@ -2,7 +2,7 @@ import os
 import scraper.slcm as scraper
 import parser.parser as parser
 import parser.responses as responses
-import parser.dbase as database
+import utils.dbase as database
 import requests
 import fbmq
 from flask import Flask, request

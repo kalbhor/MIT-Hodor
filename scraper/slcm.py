@@ -76,7 +76,10 @@ def login(rollno, password):
 
     user_field.send_keys(rollno)
     pass_field.send_keys(password)
+    sleep(0.5)
     driver.find_element_by_css_selector('#btnLogin').click()
+    sleep(1)
+
 
     try:
         driver.find_element_by_id("txtUserid")

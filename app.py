@@ -8,7 +8,7 @@ from flask import Flask, request
 app = Flask(__name__)
 ACCESS_TOKEN = os.environ['FB_ACCESS_TOKEN']
 
-@app.route('/webhook', methods=['POST','GET'])
+@app.route('/', methods=['POST','GET'])
 def main():
     req = request.get_json(silent=True)
 
@@ -17,6 +17,7 @@ def main():
 
     print("sending {} to {}".format(message, uid))
     send_message(uid, message)
+    return request.a
     return 'OK'
 
 def send_message(uid, message):

@@ -1,0 +1,13 @@
+    <h1>Sign In</h1>
+    <form action="/register" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.regno.label }}<br>
+            {{ form.regno(size=32) }}
+        </p>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>

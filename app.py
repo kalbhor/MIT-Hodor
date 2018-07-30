@@ -75,10 +75,15 @@ def handle_new_user(uid):
     send_message(uid, "Register on this url : {}".format(register_url))
 
 def handle_message(uid, message):
-    details = r.get(uid)
-    details = json.loads(details)
-    resp = scraper.main(details['regno'], details['password'])
-    send_message(uid, str(resp))
+    cache = r.get('CACHE:'+uid)
+    if cache is not None:
+        send_message(uid, 'Cache Hit' + str(cache))
+    else:
+        details = r.get(uid)
+        details = json.loads(details)
+        resp = scraper.main(details['regno'], details['password'])
+        r.setex('CACHE:'+uid, json.dumps(resp), 600)
+        send_message(uid, 'Ran Scraper' + str(resp))
 
 def send_message(uid, message):
     data = {

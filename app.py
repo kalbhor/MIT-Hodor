@@ -19,7 +19,6 @@ class RegisterForm(FlaskForm):
     uid = HiddenField('uid')
     submit = SubmitField('Register')
 
-### CONFIGS ###
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['FLASK_SECRET_KEY']
 ACCESS_TOKEN = os.environ['FB_ACCESS_TOKEN']

@@ -4,14 +4,12 @@ import redis
 import pprint
 import os
 import scraper
-import logging
 from flask import Flask, request, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, HiddenField
 from wtforms.validators import DataRequired
 
 
-logger = logging.getLogger(__name__)
 
 class RegisterForm(FlaskForm):
     regno = StringField('Registration Number', validators=[DataRequired()])
@@ -27,47 +25,50 @@ r = redis.Redis(host='localhost', port=6379)
 
 @app.route('/MIT-Hodor', methods=['POST','GET'])
 def main():
-    try:
-        logger.debug('Got request') 
-        challenge = request.args.get("hub.challenge")
-        if challenge:
-            return challenge
+    challenge = request.args.get("hub.challenge")
+    if challenge:
+        app.logger.info('Recieved webhook verification (hub.challenge)')
+        return challenge
 
-        req = request.get_json(silent=True)
+    req = request.get_json(silent=True)
 
-        message_recieved = (req['entry'][0]['messaging'][0]['message']['text'])
-        uid = (req['entry'][0]['messaging'][0]['sender']['id'])
+    message_recieved = (req['entry'][0]['messaging'][0]['message']['text'])
+    uid = (req['entry'][0]['messaging'][0]['sender']['id'])
 
-        if r.exists(uid):
-            handle_message(uid, message_recieved)
-        else:
-            handle_new_user(uid)
+    if r.exists(uid):
+        app.logger.info('Handling message uid:{}, message:{}'.format(uid, message_recieved))
+        handle_message(uid, message_recieved)
+    else:
+        app.logger.info('Handling new user uid:{}'.format(uid))
+        handle_new_user(uid)
 
-    except Exception as e:
-        logger.debug(str(e))
-    
     return 'OK'
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
         key = request.args.get('key')
+        app.logger.info('uid:{} requested registration'.format(key))
     	if r.exists('IN_REG:'+key):
+            app.logger.info('uid:{} is undergoing registration'.format(key))
             form = RegisterForm(uid=key)
             return render_template('register.html', form=form)
    	else:
+            app.logger.info('uid:{} expired/invalid registration key'.format(key))
             return '404'
     else:
         regno = request.form.get('regno')
         password = request.form.get('password')
-        uid = request.form.get('uid')
+        key = request.form.get('uid')
+        app.logger.info('uid:{} has registered'.format(key))
         r.set(uid, json.dumps({'regno' : regno, 'password' : password}))
-        return '<h1> Registration complete {}</h1>'.format(str(uid))
+        return '<h1> Registration complete </h1>'
 
 
 def handle_new_user(uid):
     uid_hash = uid ## Change this
-    print(uid)
+
+    app.logger.info('setting in_reg for uid:{}'.format(uid_hash))
     r.setex('IN_REG:'+uid_hash, 'unregistered', 300)
 
     register_url = "https://kalbhor.xyz/register?key={}".format(uid_hash)
@@ -76,15 +77,20 @@ def handle_new_user(uid):
 def handle_message(uid, message):
     cache = r.get('CACHE:'+uid)
     if cache is not None:
+        app.logger.info('cache hit for uid:{}'.format(uid))
         send_message(uid, 'Cache Hit' + str(cache))
     else:
         details = r.get(uid)
         details = json.loads(details)
+        app.logger.info('scraping for uid:{}'.format(uid))
         resp = scraper.main(details['regno'], details['password'])
+        app.logger.info('setting cache for uid:{}'.format(uid))
         r.setex('CACHE:'+uid, json.dumps(resp), 600)
+
         send_message(uid, 'Ran Scraper' + str(resp))
 
 def send_message(uid, message):
+    app.logger.info('sending {} to uid:{}'.format(message, uid))
     data = {
   	"messaging_type": "RESPONSE",
   	"recipient": {

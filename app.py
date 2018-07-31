@@ -28,7 +28,7 @@ if __name__ != '__main__':
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
 
-@app.route('/MIT-Hodor', methods=['POST','GET'])
+@app.route('/', methods=['POST','GET'])
 def main():
     challenge = request.args.get("hub.challenge")
     if challenge:
@@ -87,7 +87,7 @@ def handle_new_user(uid):
     app.logger.info('setting in_reg for uid:{}'.format(uid_hash))
     r.setex('IN_REG:'+uid_hash, 'unregistered', 300)
 
-    register_url = "https://kalbhor.xyz/register?key={}".format(uid_hash)
+    register_url = "https://kalbhor.xyz/MIT-Hodor/register?key={}".format(uid_hash)
     send_message(uid, "Register on this url : {}".format(register_url))
 
 def handle_message(uid, message):
@@ -120,5 +120,5 @@ def send_message(uid, message):
     return requests.post('https://graph.facebook.com/v2.6/me/messages?access_token={}'.format(ACCESS_TOKEN), json=data)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    app.run(debug=True, port=8999)
 

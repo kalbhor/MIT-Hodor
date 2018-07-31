@@ -4,11 +4,17 @@ import redis
 import pprint
 import os
 import scraper
+import logging
 from flask import Flask, request, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, HiddenField
 from wtforms.validators import DataRequired
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ['FLASK_SECRET_KEY']
+ACCESS_TOKEN = os.environ['FB_ACCESS_TOKEN']
+
+r = redis.Redis(host='localhost', port=6379)
 
 
 class RegisterForm(FlaskForm):
@@ -17,11 +23,10 @@ class RegisterForm(FlaskForm):
     uid = HiddenField('uid')
     submit = SubmitField('Register')
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ['FLASK_SECRET_KEY']
-ACCESS_TOKEN = os.environ['FB_ACCESS_TOKEN']
-
-r = redis.Redis(host='localhost', port=6379)
+if __name__ != '__main__':
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
 
 @app.route('/MIT-Hodor', methods=['POST','GET'])
 def main():
@@ -31,9 +36,15 @@ def main():
         return challenge
 
     req = request.get_json(silent=True)
-
-    message_recieved = (req['entry'][0]['messaging'][0]['message']['text'])
     uid = (req['entry'][0]['messaging'][0]['sender']['id'])
+
+    try:
+    	message_recieved = (req['entry'][0]['messaging'][0]['message']['text'])
+    except Exception as e:
+        app.logger.error('Exception {} faced when recieved {} from uid:{}'.format(str(e), req, uid))
+        ## handle_exception(uid, message_recieved)
+        send_message(uid, 'Your request faced some error')
+        return 'OK'
 
     if r.exists(uid):
         app.logger.info('Handling message uid:{}, message:{}'.format(uid, message_recieved))
@@ -59,8 +70,13 @@ def register():
     else:
         regno = request.form.get('regno')
         password = request.form.get('password')
-        key = request.form.get('uid')
-        app.logger.info('uid:{} has registered'.format(key))
+        uid = request.form.get('uid')
+        if scraper.login(regno, password) is None:
+            app.logger.info('uid:{} provided wrong credentials'.format(uid))
+            return '<h1> Wrong credentials </h1>'
+
+        app.logger.info('uid:{} has registered'.format(uid))
+        r.delete('IN_REG:'+uid)
         r.set(uid, json.dumps({'regno' : regno, 'password' : password}))
         return '<h1> Registration complete </h1>'
 

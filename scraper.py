@@ -9,6 +9,7 @@ import mechanize
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+#logger.setFormatter(logging.Formatter('[%(asctime)s] [%(name)s] [%(levelname)s]  %(message)s'))
 URL = "http://slcm.manipal.edu/{}"
 
 def login(regno, password):
@@ -218,6 +219,9 @@ def main(regno, password):
     This scraper will be called by the server.
     """
     driver = login(regno, password)
+    if driver is None:
+        logger.warning('Wrong credentials')
+        return 'wrong credentials'
     response = construct(driver, regno)
     return response
 

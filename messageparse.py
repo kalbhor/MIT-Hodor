@@ -158,7 +158,3 @@ def get_response(message="", scraped_data={}):
         reply += "Hodor?"
 
     return reply
-
-
-key = raw_input('->')
-print(get_response(key, SUBJECTS))

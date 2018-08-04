@@ -12,9 +12,3 @@ MARKS = [
         "sessional",
         "marks",
         ]
-
-IGNORE = [
-        "what"
-        "what's"
-        "which"
-        ]

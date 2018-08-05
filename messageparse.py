@@ -1,6 +1,6 @@
 from fuzzywuzzy import fuzz
 import json
-from messageconstants import IGNORE, MARKS, ATTENDANCE, SUBJECTS
+from constants import MARKS, ATTENDANCE
 
 '''
 Hard-coded NLP library for MIT-HODOR
@@ -19,9 +19,6 @@ def attendance_match(key):
 
 def marks_match(key):
     return match(key, reference=MARKS)
-
-def ignore_match(key):
-    return match(key, reference=IGNORE)
 
 # Returns the action(s) to be carried out for the given message
 def intent(message = "", scraped_data={}):
@@ -121,7 +118,7 @@ The main function to be called from this file.
 The returned string can be sent to the user as message.
 '''
 def get_response(message="", scraped_data={}):
-    actual_intent = intent(message=key, scraped_data=SUBJECTS)
+    actual_intent = intent(message=key, scraped_data=scraped_data)
     #print(actual_intent)
 
     reply = ""

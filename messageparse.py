@@ -118,16 +118,16 @@ The main function to be called from this file.
 The returned string can be sent to the user as message.
 '''
 def get_response(message="", scraped_data={}):
-    actual_intent = intent(message=key, scraped_data=scraped_data)
+    actual_intent = intent(message=message, scraped_data=scraped_data)
     #print(actual_intent)
 
     reply = ""
     if actual_intent['subject'] != []:
 
         for i in actual_intent['subject']:
-            reply += i + "...\n"
+            reply += i
             if actual_intent['marks'] is True:
-                reply += "\nMARKS -\n"
+                reply += "\nMarks -\n"
 
                 if scraped_data['Subjects'][i] != {}:
                     reply += "Grade: {}\n".format(scraped_data['Subjects'][i]['Grade'])
@@ -136,17 +136,19 @@ def get_response(message="", scraped_data={}):
                         reply += "{}: {}\n".format(j, scraped_data['Subjects'][i]['Internals'][j]["Obtained"])
 
             if actual_intent['attendance'] is True:
-                reply += "\nATTENDANCE -\n"
+                reply += "\nAttendance -\n"
 
-                if scraped_data['Attendance'][i] != {}:
-                    reply += "{}:\
-                            \nAttended: {}/{}\
-                            \nPercentage: {}%".format(i, scraped_data['Attendance'][i]['Attended'],
-                            scraped_data['Attendance'][i]['Total'],
-                            scraped_data['Attendance'][i]['Percentage'])
+                try:
+                    if scraped_data['Attendance'][i] != {}:
+                        reply += "{}:\
+                                \nAttended: {}/{}\
+                                \nPercentage: {}%".format(i, scraped_data['Attendance'][i]['Attended'],
+                                scraped_data['Attendance'][i]['Total'],
+                                scraped_data['Attendance'][i]['Percentage'])
+                except KeyError:    # Hits KeyError if attendance is not available
+                    pass
 
-                #if not actual_intent['attendance'] and not actual_intent['marks']:
-            else:
+            if not actual_intent['attendance'] and not actual_intent['marks']:
                 reply += "What do you want me to do?"
 
     elif actual_intent['marks'] or actual_intent['attendance']:
